@@ -1,0 +1,6 @@
+.*
+kuber
+bin
+_state
+_vendor*
+__tmp
