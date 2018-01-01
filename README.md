@@ -16,7 +16,7 @@ Start the `Kuber Server`.
 
 ```
 cd $GOPATH/src/github.com/datalayer/kuber
-go run main.go --apiserver-host=http://localhost:8001
+go run main.go server --apiserver-host=http://localhost:8001
 ```
 
 ## Manage the Dependencies
