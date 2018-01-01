@@ -2,10 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"strings"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/kris-nova/kubicorn/cutil/logger"
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -60,29 +62,50 @@ func addCommands() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	/*
+		if cfgFile != "" {
+			// Use config file from the flag.
+			viper.SetConfigFile(cfgFile)
+		} else {
+			// Find home directory.
+			home, err := homedir.Dir()
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
 
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			// Search config in home directory with name ".cobra-example" (without extension).
+			viper.AddConfigPath(home)
+			viper.SetConfigName(".kuber")
 		}
 
-		// Search config in home directory with name ".cobra-example" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".kuber")
-	}
+		viper.AutomaticEnv() // read in environment variables that match
 
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		// If a config file is found, read it in.
+		if err := viper.ReadInConfig(); err == nil {
+			fmt.Println("Using config file:", viper.ConfigFileUsed())
+		}
+	*/
+	viper.AddConfigPath("/etc/datalayer/kuber")
+	viper.AddConfigPath("$HOME/.datalayer/kuber")
+	viper.AddConfigPath("./kuber")
+	viper.AddConfigPath("./config")
+	viper.AddConfigPath("./")
+	viper.WatchConfig()
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		log.Println("Config file changed:", e.Name)
+	})
+	viper.SetConfigName("kuber-conf")
+	viper.SetConfigType("yml")
+	// Find and read the config file.
+	if err := viper.ReadInConfig(); err != nil {
+		log.Println("Error reading config file", err)
 	}
+	// Confirm which config file is used.
+	log.Printf("Using config file: %s\n", viper.ConfigFileUsed())
+	viper.SetEnvPrefix("kuber")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AutomaticEnv()
 
 }
 

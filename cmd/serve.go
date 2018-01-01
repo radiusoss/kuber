@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/datalayer/kuber/config"
@@ -17,7 +16,6 @@ import (
 	"github.com/datalayer/kuber/rest"
 
 	restful "github.com/emicklei/go-restful"
-	"github.com/fsnotify/fsnotify"
 	"github.com/kubernetes/dashboard/src/app/backend/auth"
 	authApi "github.com/kubernetes/dashboard/src/app/backend/auth/api"
 	"github.com/kubernetes/dashboard/src/app/backend/auth/jwe"
@@ -138,27 +136,6 @@ func serve() {
 	pflag.Parse()
 
 	flag.CommandLine.Parse(make([]string, 0)) // Init for glog calls in kubernetes packages.
-
-	viper.AddConfigPath("/etc/datalayer/kuber")
-	viper.AddConfigPath("$HOME/.datalayer/kuber")
-	viper.AddConfigPath("./kuber")
-	viper.AddConfigPath("./config")
-	viper.AddConfigPath("./")
-	viper.WatchConfig()
-	viper.OnConfigChange(func(e fsnotify.Event) {
-		log.Println("Config file changed:", e.Name)
-	})
-	viper.SetConfigName("kuber-conf")
-	viper.SetConfigType("yml")
-	// Find and read the config file.
-	if err := viper.ReadInConfig(); err != nil {
-		log.Println("Error reading config file", err)
-	}
-	// Confirm which config file is used.
-	log.Printf("Using config file: %s\n", viper.ConfigFileUsed())
-	viper.SetEnvPrefix("kuber")
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	viper.AutomaticEnv()
 
 	err := viper.Unmarshal(&config.KuberConfig)
 	if err != nil {
