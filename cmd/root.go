@@ -97,14 +97,16 @@ func initConfig() {
 	})
 	viper.SetConfigName("kuber-conf")
 	viper.SetConfigType("yml")
+
 	// Find and read the config file.
 	if err := viper.ReadInConfig(); err != nil {
 		log.Println("Error reading config file", err)
 	}
 	// Confirm which config file is used.
 	log.Printf("Using config file: %s\n", viper.ConfigFileUsed())
+
 	viper.SetEnvPrefix("kuber")
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.AutomaticEnv()
 
 }
