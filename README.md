@@ -4,7 +4,7 @@ This folder contains the `Golang` REST and WebSocket server for `Kuber`.
 
 `git clone` this repository in your `go` path.
 
-## Hack the Code
+## Hack Source Code
 
 Start the `K8S Proxy`.
 
@@ -18,6 +18,10 @@ Start the `Kuber Server`.
 cd $GOPATH/src/github.com/datalayer/kuber
 go run main.go server --apiserver-host=http://localhost:8001
 ```
+
+We ship a snapshot of the user interface (use the [kuber-plane](https://github.com/datalayer/kuber-plane) repository for the latest version).
+
+You can now browse [http://localhost:9091](http://localhost:9091) or make REST call to the API.
 
 ## Manage the Dependencies
 
