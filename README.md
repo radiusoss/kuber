@@ -14,7 +14,7 @@ kubectl proxy
 
 Start the `Kuber Server`.
 
-```
+```shell
 cd $GOPATH/src/github.com/datalayer/kuber
 go run main.go server --apiserver-host=http://localhost:8001
 ```

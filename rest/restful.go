@@ -5,13 +5,15 @@ import (
 	"github.com/datalayer/kuber/cluster"
 	"github.com/datalayer/kuber/config"
 	"github.com/datalayer/kuber/helm"
+	"github.com/datalayer/kuber/microsoft"
 	"github.com/datalayer/kuber/spl"
+	"github.com/datalayer/kuber/twitter"
 	"github.com/datalayer/kuber/user"
 	wso "github.com/datalayer/kuber/ws"
 	restful "github.com/emicklei/go-restful"
 )
 
-func SetupGoRestful(wsContainer *restful.Container) {
+func SetupGoRestful(wsContainer *restful.Container, cf config.Config) {
 
 	// Add container filter to enable CORS
 	cors := restful.CrossOriginResourceSharing{
@@ -45,6 +47,14 @@ func SetupGoRestful(wsContainer *restful.Container) {
 	// Helm Resources.
 	h := helm.HelmResource{}
 	wsContainer.Add(h.WebService())
+
+	// Microsoft Resources.
+	m := microsoft.MicrosoftResource{}
+	wsContainer.Add(m.WebService(cf))
+
+	// Twitter Resources.
+	tw := twitter.TwitterResource{}
+	wsContainer.Add(tw.WebService(cf))
 
 	// User Resources.
 	u := user.UserResource{map[string]user.User{}}

@@ -14,8 +14,8 @@ import (
 
 var cfgFile string
 
-// RootCmd represents the base command when called without any subcommands
-var RootCmd = &cobra.Command{
+// KuberCmd represents the base command when called without any subcommands
+var KuberCmd = &cobra.Command{
 	Use:   "kuber",
 	Short: "kuber, Easy Kubernetes",
 	Long: `
@@ -27,7 +27,7 @@ Kuber allows you to create and manage a Kubernetes cluster for Big Data Science 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := RootCmd.Execute(); err != nil {
+	if err := KuberCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -39,25 +39,23 @@ func init() {
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here, will be global for your application.
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kuber.yaml)")
+	KuberCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kuber.yaml)")
 
-	RootCmd.PersistentFlags().IntVarP(&logger.Level, "verbose", "v", 3, "Log level")
-	RootCmd.PersistentFlags().BoolVarP(&logger.Color, "color", "C", true, "Toggle colorized logs")
-	RootCmd.PersistentFlags().BoolVarP(&logger.Fabulous, "fab", "f", false, "Toggle colorized logs")
+	KuberCmd.PersistentFlags().IntVarP(&logger.Level, "verbose", "v", 3, "Log level")
+	KuberCmd.PersistentFlags().BoolVarP(&logger.Color, "color", "C", true, "Toggle colorized logs")
+	KuberCmd.PersistentFlags().BoolVarP(&logger.Fabulous, "fab", "f", false, "Toggle colorized logs")
 
 	// Cobra also supports local flags, which will only run when this action is called directly.
-	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
-	// add commands
+	KuberCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	// add commands
 	addCommands()
 }
 
 func addCommands() {
-	RootCmd.AddCommand(CreateCmd())
-	RootCmd.AddCommand(ApplyCmd())
-	RootCmd.AddCommand(DeleteCmd())
+	KuberCmd.AddCommand(CreateCmd())
+	KuberCmd.AddCommand(ApplyCmd())
+	KuberCmd.AddCommand(DeleteCmd())
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -95,7 +93,7 @@ func initConfig() {
 	viper.OnConfigChange(func(e fsnotify.Event) {
 		log.Println("Config file changed:", e.Name)
 	})
-	viper.SetConfigName("kuber-conf")
+	viper.SetConfigName("kuber")
 	viper.SetConfigType("yml")
 
 	// Find and read the config file.

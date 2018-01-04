@@ -52,15 +52,18 @@ var (
 	argEnableInsecureLogin      bool
 	argSystemBanner             string
 	argSystemBannerSeverity     string
-	argsAzureApplicationId      string
-	argsAzureRedirect           string
-	argsAzureScope              string
 	argsKuberPlane              string
 	argsKuberRest               string
 	argsKuberWs                 string
+	argsMicrosoftApplicationId  string
+	argsMicrosoftRedirect       string
+	argsMicrosoftSecret         string
+	argsMicrosoftScope          string
 	argsSpitfireRest            string
 	argsSpitfireWs              string
 	argsHdfs                    string
+	argsTwitterConsumerKey      string
+	argsTwitterConsumerSecret   string
 	argsTwitterRedirect         string
 )
 
@@ -75,18 +78,7 @@ var serverCmd = &cobra.Command{
 
 func init() {
 
-	RootCmd.AddCommand(serverCmd)
-
-	serverCmd.PersistentFlags().StringVar(&argsAzureApplicationId, "azure-application-id", "f145fb87-901d-4519-ad39-573c30770e6f", "")
-	serverCmd.PersistentFlags().StringVar(&argsAzureRedirect, "azure-redirect", "", "")
-	serverCmd.PersistentFlags().StringVar(&argsAzureScope, "azure-scope", "User.ReadBasic.All+Contacts.Read+Mail.Send+Files.ReadWrite+Notes.ReadWrite", "")
-	serverCmd.PersistentFlags().StringVar(&argsHdfs, "hdfs", "http://localhost:50070", "")
-	serverCmd.PersistentFlags().StringVar(&argsKuberPlane, "kuber-plane", "", "")
-	serverCmd.PersistentFlags().StringVar(&argsKuberRest, "kuber-rest", "http://localhost:9091", "")
-	serverCmd.PersistentFlags().StringVar(&argsKuberWs, "kuber-ws", "ws://localhost:9091", "")
-	serverCmd.PersistentFlags().StringVar(&argsSpitfireRest, "spitfire-rest", "http://localhost:8091", "")
-	serverCmd.PersistentFlags().StringVar(&argsSpitfireWs, "spitfire-ws", "ws://localhost:8091", "")
-	serverCmd.PersistentFlags().StringVar(&argsTwitterRedirect, "twitter-redirect", "http://datalayer-001:8081/twitter/maketoken", "")
+	KuberCmd.AddCommand(serverCmd)
 
 	serverCmd.PersistentFlags().IntVar(&argInsecurePort, "insecure-port", 9091, "The port to listen to for incoming HTTP requests.")
 	serverCmd.PersistentFlags().IntVar(&argPort, "port", 8443, "The secure port to listen to for incoming HTTPS requests.")
@@ -113,16 +105,34 @@ func init() {
 	serverCmd.PersistentFlags().StringVar(&argSystemBanner, "system-banner", "", "When non-empty displays message to Dashboard users. Accepts simple HTML tags. Default: ''.")
 	serverCmd.PersistentFlags().StringVar(&argSystemBannerSeverity, "system-banner-severity", "INFO", "Severity of system banner. Should be one of 'INFO|WARNING|ERROR'. Default: 'INFO'.")
 
+	serverCmd.PersistentFlags().StringVar(&argsHdfs, "hdfs", "http://localhost:50070", "")
+	serverCmd.PersistentFlags().StringVar(&argsKuberPlane, "kuber-plane", "http://localhost:4326?kuberRest=http://localhost:9091", "")
+	serverCmd.PersistentFlags().StringVar(&argsKuberRest, "kuber-rest", "http://localhost:9091", "")
+	serverCmd.PersistentFlags().StringVar(&argsKuberWs, "kuber-ws", "ws://localhost:9091", "")
+	serverCmd.PersistentFlags().StringVar(&argsMicrosoftApplicationId, "microsoft-application-id", "86d75ba4-f7a0-4699-9c92-5c7a2bca194d", "")
+	serverCmd.PersistentFlags().StringVar(&argsMicrosoftRedirect, "microsoft-redirect", "http://localhost:9091/api/v1/microsoft/callback", "")
+	serverCmd.PersistentFlags().StringVar(&argsMicrosoftSecret, "microsoft-secret", "afMEQW2~?*jdyheSJU7715_", "")
+	//	serverCmd.PersistentFlags().StringVar(&argsMicrosoftScope, "microsoft-scope", "User.ReadBasic.All+Contacts.Read+Mail.Send+Files.ReadWrite+Notes.ReadWrite", "")
+	serverCmd.PersistentFlags().StringVar(&argsMicrosoftScope, "microsoft-scope", "User.ReadBasic.All", "")
+	serverCmd.PersistentFlags().StringVar(&argsSpitfireRest, "spitfire-rest", "http://localhost:8091", "")
+	serverCmd.PersistentFlags().StringVar(&argsSpitfireWs, "spitfire-ws", "ws://localhost:8091", "")
+	serverCmd.PersistentFlags().StringVar(&argsTwitterConsumerKey, "twitter-consumer-key", "Fsy5JzXec7wY5mPPsEdsNkAe4", "")
+	serverCmd.PersistentFlags().StringVar(&argsTwitterConsumerSecret, "twitter-consumer-secret", "q0suooaCz17lkiHZZi35OoXfBJrAPRyUBi0AssEppP9YXxBSRz", "")
+	serverCmd.PersistentFlags().StringVar(&argsTwitterRedirect, "twitter-redirect", "http://localhost:9091/api/v1/twitter/callback", "")
+
 	//	viper.BindPFlags(pflag.CommandLine)
-	viper.BindPFlag("azureapplicationid", serverCmd.PersistentFlags().Lookup("azure-application-id"))
-	viper.BindPFlag("azureredirect", serverCmd.PersistentFlags().Lookup("azure-redirect"))
-	viper.BindPFlag("azurescope", serverCmd.PersistentFlags().Lookup("azure-scope"))
 	viper.BindPFlag("kuberplane", serverCmd.PersistentFlags().Lookup("kuber-plane"))
 	viper.BindPFlag("kuberrest", serverCmd.PersistentFlags().Lookup("kuber-rest"))
 	viper.BindPFlag("kuberws", serverCmd.PersistentFlags().Lookup("kuber-ws"))
+	viper.BindPFlag("microsoftapplicationid", serverCmd.PersistentFlags().Lookup("microsoft-application-id"))
+	viper.BindPFlag("microsoftredirect", serverCmd.PersistentFlags().Lookup("microsoft-redirect"))
+	viper.BindPFlag("microsoftsecret", serverCmd.PersistentFlags().Lookup("microsoft-secret"))
+	viper.BindPFlag("microsoftscope", serverCmd.PersistentFlags().Lookup("microsoft-scope"))
 	viper.BindPFlag("spitfirerest", serverCmd.PersistentFlags().Lookup("spitfire-rest"))
 	viper.BindPFlag("spitfirews", serverCmd.PersistentFlags().Lookup("spitfire-ws"))
 	viper.BindPFlag("hdfs", serverCmd.PersistentFlags().Lookup("hdfs"))
+	viper.BindPFlag("twitterconsumerkey", serverCmd.PersistentFlags().Lookup("twitter-consumer-key"))
+	viper.BindPFlag("twitterconsumersecret", serverCmd.PersistentFlags().Lookup("twitter-consumer-secret"))
 	viper.BindPFlag("twitterredirect", serverCmd.PersistentFlags().Lookup("twitter-redirect"))
 
 }
@@ -157,7 +167,7 @@ func serveAlone() {
 				handlers.CORS(gorilla.CredentialsOk(), gorilla.OriginsOk(), gorilla.HeadersOk(), gorilla.MethodsOk())(r))))
 	*/
 	wsContainer := restful.NewContainer()
-	rest.SetupGoRestful(wsContainer)
+	rest.SetupGoRestful(wsContainer, config.KuberConfig)
 	server := &http.Server{Addr: ":" + strconv.Itoa(argInsecurePort), Handler: wsContainer}
 	log.Fatal(server.ListenAndServe())
 }
@@ -205,7 +215,7 @@ func serveWithK8s() {
 		handleFatalInitError(err)
 	}
 
-	rest.SetupGoRestful(apiHandler)
+	rest.SetupGoRestful(apiHandler, config.KuberConfig)
 
 	if argAutoGenerateCertificates {
 		log.Println("Auto-generating certificates")

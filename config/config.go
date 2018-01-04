@@ -3,16 +3,19 @@ package config
 var KuberConfig Config
 
 type Config struct {
-	KuberRest          string `json:"kuberRest"`
-	KuberWs            string `json:"kuberWs"`
-	AzureApplicationId string `json:"azureApplicationId"`
-	AzureRedirect      string `json:"azureRedirect"`
-	AzureScope         string `json:"azureScope"`
-	SpitfireRest       string `json:"spitfireRest"`
-	SpitfireWs         string `json:"spitfireWs"`
-	Hdfs               string `json:"hdfs"`
-	TwitterRedirect    string `json:"twitterRedirect"`
-	KuberPlane         string `json:"kuberPlane"`
+	Hdfs                   string `json:"hdfs"`
+	KuberPlane             string `json:"kuberPlane"`
+	KuberRest              string `json:"kuberRest"`
+	KuberWs                string `json:"kuberWs"`
+	MicrosoftApplicationId string `json:"microsoftApplicationId"`
+	MicrosoftRedirect      string `json:"microsoftRedirect"`
+	MicrosoftScope         string `json:"microsoftScope"`
+	MicrosoftSecret        string `json:"microsoftSecret"`
+	SpitfireRest           string `json:"spitfireRest"`
+	SpitfireWs             string `json:"spitfireWs"`
+	TwitterConsumerKey     string `json:"consumerKey"`
+	TwitterConsumerSecret  string `json:"consumerSecret"`
+	TwitterRedirect        string `json:"twitterRedirect"`
 	//	Server   ServerConfig
 	//	Database PersistenceConfig
 }
