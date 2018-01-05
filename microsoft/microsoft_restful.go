@@ -53,13 +53,19 @@ func (m MicrosoftResource) getAuthorizationCode(request *restful.Request, respon
 
 	hc := http.Client{}
 
+	redirecttUrl := cff.MicrosoftRedirect
+	if redirecttUrl == "" {
+		redirecttUrl = request.Request.URL.String()
+		strings.Replace(redirecttUrl, "", "", 1)
+	}
+
 	form := url.Values{}
 	form.Add("code", code)
 	form.Add("grant_type", "authorization_code")
 	form.Add("client_id", cff.MicrosoftApplicationId)
 	form.Add("client_secret", cff.MicrosoftSecret)
 	form.Add("scope", cff.MicrosoftScope)
-	form.Add("redirect_uri", cff.MicrosoftRedirect)
+	form.Add("redirect_uri", redirecttUrl)
 	log.Info("Form: %v", form)
 
 	req, _ := http.NewRequest("POST", "https://login.microsoftonline.com/common/oauth2/v2.0/token", strings.NewReader(form.Encode()))

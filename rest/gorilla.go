@@ -29,7 +29,6 @@ func SetupGorilla() *mux.Router {
 	tw.Methods("GET").Path("/follow").HandlerFunc(twitter.GetFollower)
 	tw.Methods("GET").Path("/followids").HandlerFunc(twitter.GetFollowerIDs)
 	tw.Methods("GET").Path("/time").HandlerFunc(twitter.GetTimeLine)
-	tw.Methods("GET").Path("/user").HandlerFunc(twitter.GetUserDetail)
 
 	c := r.PathPrefix("/api").Subrouter()
 	c.Methods("GET").Path("/config").HandlerFunc(config.GetConfig)

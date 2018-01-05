@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/datalayer/kuber/config"
 	"github.com/gorilla/sessions"
@@ -56,12 +57,20 @@ func RedirectUserToTwitter(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(conf)
 
 	fmt.Println("Enter redirect to twitter")
-	fmt.Println("Callback URL=", conf.TwitterRedirect)
-	requestUrl := TwitterClient.GetAuthURL(conf.TwitterRedirect)
 
+	redirecttUrl := conf.TwitterRedirect
+	if redirecttUrl == "" {
+		redirecttUrl = r.URL.String()
+		strings.Replace(redirecttUrl, "", "", 1)
+	}
+	fmt.Println("Callback URL=", redirecttUrl)
+
+	requestUrl := TwitterClient.GetAuthURL(redirecttUrl)
 	fmt.Println("Request URL: " + requestUrl)
+
 	http.Redirect(w, r, requestUrl, http.StatusTemporaryRedirect)
 	fmt.Println("Leaving redirect...")
+
 }
 
 func GetTwitterToken(w http.ResponseWriter, r *http.Request) {
@@ -126,11 +135,5 @@ func GetFollower(w http.ResponseWriter, r *http.Request) {
 func GetFollowerIDs(w http.ResponseWriter, r *http.Request) {
 	followers, bits, _ := TwitterClient.QueryFollowerIDs(10)
 	fmt.Println("Follower IDs=", followers)
-	fmt.Fprintf(w, "The item is: "+string(bits))
-}
-
-func GetUserDetail(w http.ResponseWriter, r *http.Request) {
-	followers, bits, _ := TwitterClient.QueryFollowerById(2244994945)
-	fmt.Println("Follower Detail of =", followers)
 	fmt.Fprintf(w, "The item is: "+string(bits))
 }

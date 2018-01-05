@@ -106,7 +106,7 @@ func init() {
 	serverCmd.PersistentFlags().StringVar(&argSystemBannerSeverity, "system-banner-severity", "INFO", "Severity of system banner. Should be one of 'INFO|WARNING|ERROR'. Default: 'INFO'.")
 
 	serverCmd.PersistentFlags().StringVar(&argsHdfs, "hdfs", "http://localhost:50070", "")
-	serverCmd.PersistentFlags().StringVar(&argsKuberPlane, "kuber-plane", "http://localhost:4326?kuberRest=http://localhost:9091", "")
+	serverCmd.PersistentFlags().StringVar(&argsKuberPlane, "kuber-plane", "http://localhost:4326", "")
 	serverCmd.PersistentFlags().StringVar(&argsKuberRest, "kuber-rest", "http://localhost:9091", "")
 	serverCmd.PersistentFlags().StringVar(&argsKuberWs, "kuber-ws", "ws://localhost:9091", "")
 	serverCmd.PersistentFlags().StringVar(&argsMicrosoftApplicationId, "microsoft-application-id", "86d75ba4-f7a0-4699-9c92-5c7a2bca194d", "")
@@ -118,7 +118,7 @@ func init() {
 	serverCmd.PersistentFlags().StringVar(&argsSpitfireWs, "spitfire-ws", "ws://localhost:8091", "")
 	serverCmd.PersistentFlags().StringVar(&argsTwitterConsumerKey, "twitter-consumer-key", "Fsy5JzXec7wY5mPPsEdsNkAe4", "")
 	serverCmd.PersistentFlags().StringVar(&argsTwitterConsumerSecret, "twitter-consumer-secret", "q0suooaCz17lkiHZZi35OoXfBJrAPRyUBi0AssEppP9YXxBSRz", "")
-	serverCmd.PersistentFlags().StringVar(&argsTwitterRedirect, "twitter-redirect", "http://localhost:9091/api/v1/twitter/callback", "")
+	serverCmd.PersistentFlags().StringVar(&argsTwitterRedirect, "twitter-redirect", "", "")
 
 	//	viper.BindPFlags(pflag.CommandLine)
 	viper.BindPFlag("kuberplane", serverCmd.PersistentFlags().Lookup("kuber-plane"))

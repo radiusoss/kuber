@@ -17,7 +17,7 @@ var cfgFile string
 // KuberCmd represents the base command when called without any subcommands
 var KuberCmd = &cobra.Command{
 	Use:   "kuber",
-	Short: "kuber, Easy Kubernetes",
+	Short: "kuber, Community Kubernetes",
 	Long: `
 Kuber allows you to create and manage a Kubernetes cluster for Big Data Science needs.`,
 	// Uncomment the following line if your bare application has an action associated with it:

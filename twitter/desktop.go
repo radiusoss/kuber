@@ -13,7 +13,7 @@ func NewDesktopClient(consumerKey, consumerSecret string) *DesktopClient {
 		consumerKey,
 		consumerSecret,
 		oauth.ServiceProvider{
-			RequestTokenUrl:   OAUTH_REQUES_TOKEN,
+			RequestTokenUrl:   OAUTH_REQUEST_TOKEN,
 			AuthorizeTokenUrl: OAUTH_AUTH_TOKEN,
 			AccessTokenUrl:    OAUTH_ACCESS_TOKEN,
 		},
