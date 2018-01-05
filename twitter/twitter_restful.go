@@ -73,13 +73,16 @@ func (t TwitterResource) RedirectUserToTwitterRestful(request *restful.Request, 
 
 	redirecttUrl := conf.TwitterRedirect
 	if redirecttUrl == "" {
-		scheme := "http"
-		if request.Request.TLS != nil {
-			scheme = "https"
-		}
+		scheme := "https"
+		/*
+			if request.Request.TLS != nil {
+				scheme = "https"
+			}
+		*/
 		host := request.Request.Host
 		if host == "" {
 			host = "localhost:9091"
+			scheme = "http"
 		}
 		redirecttUrl = scheme + "://" + host + "/api/v1/twitter/callback"
 	}
