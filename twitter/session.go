@@ -4,39 +4,39 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/datalayer/kuber/config"
 	"github.com/mrjones/oauth"
 )
 
-func NewTwitterSession(consumerKey, consumerSecret string) *TwitterSession {
-
-	newServer := new(TwitterSession)
-
-	newServer.OAuthConsumer = oauth.NewConsumer(
-		consumerKey,
-		consumerSecret,
-		oauth.ServiceProvider{
-			RequestTokenUrl:   OAUTH_REQUEST_TOKEN,
-			AuthorizeTokenUrl: OAUTH_AUTH_TOKEN,
-			AccessTokenUrl:    OAUTH_ACCESS_TOKEN,
-		},
-	)
-
-	//Enable debug info
-	newServer.OAuthConsumer.Debug(false)
-
-	// newServer.Client = *newClient
-	newServer.OAuthTokens = make(map[string]*oauth.RequestToken)
-	return newServer
-}
+var OAuthConsumer *oauth.Consumer
 
 type TwitterSession struct {
 	Client
-	OAuthConsumer *oauth.Consumer
-	OAuthTokens   map[string]*oauth.RequestToken
+	OAuthTokens map[string]*oauth.RequestToken
+	Clients     map[string]Client
+}
+
+func NewTwitterSession(consumerKey, consumerSecret string) *TwitterSession {
+	if OAuthConsumer == nil {
+		OAuthConsumer = oauth.NewConsumer(
+			config.KuberConfig.TwitterConsumerKey,
+			config.KuberConfig.TwitterConsumerSecret,
+			oauth.ServiceProvider{
+				RequestTokenUrl:   OAUTH_REQUEST_TOKEN,
+				AuthorizeTokenUrl: OAUTH_AUTH_TOKEN,
+				AccessTokenUrl:    OAUTH_ACCESS_TOKEN,
+			},
+		)
+		OAuthConsumer.Debug(false)
+	}
+	tws := new(TwitterSession)
+	tws.OAuthTokens = make(map[string]*oauth.RequestToken)
+	tws.Clients = make(map[string]Client)
+	return tws
 }
 
 func (s *TwitterSession) GetAuthURL(tokenUrl string) string {
-	token, requestUrl, err := s.OAuthConsumer.GetRequestTokenAndUrl(tokenUrl)
+	token, requestUrl, err := OAuthConsumer.GetRequestTokenAndUrl(tokenUrl)
 	if err != nil {
 		log.Println(err)
 	}
@@ -45,15 +45,20 @@ func (s *TwitterSession) GetAuthURL(tokenUrl string) string {
 	return requestUrl
 }
 
-func (s *TwitterSession) CompleteAuth(tokenKey, verificationCode string) error {
-	accessToken, err := s.OAuthConsumer.AuthorizeToken(s.OAuthTokens[tokenKey], verificationCode)
+func (s *TwitterSession) CompleteAuth(tokenKey, verificationCode string) (Client, *oauth.AccessToken, error) {
+	accessToken, err := OAuthConsumer.AuthorizeToken(s.OAuthTokens[tokenKey], verificationCode)
 	if err != nil {
 		log.Println(err)
 	}
-	s.HttpConn, err = s.OAuthConsumer.MakeHttpClient(accessToken)
-	if err != nil {
-		log.Println(err)
+	httpConn, err1 := OAuthConsumer.MakeHttpClient(accessToken)
+	if err1 != nil {
+		log.Println(err1)
 	}
+	s.HttpConn = httpConn
+	c := Client{
+		HttpConn: httpConn,
+	}
+	s.Clients[accessToken.Token] = c
 	fmt.Println("Access Token: ", accessToken)
-	return nil
+	return c, accessToken, err
 }

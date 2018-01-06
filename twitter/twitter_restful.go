@@ -14,10 +14,11 @@ import (
 )
 
 type TwitterUser struct {
-	Username       string `json:"username"`
-	Oauth_token    string `json:"oauth_token"`
-	Oauth_verifier string `json:"oauth_verifier"`
-	IsAuth         bool   `json:"isAuth"`
+	Username           string `json:"username"`
+	Oauth_token        string `json:"oauth_token"`
+	Oauth_verifier     string `json:"oauth_verifier"`
+	Oauth_access_token string `json:"oauth_access_token"`
+	IsAuth             bool   `json:"isAuth"`
 }
 
 type TwitterResource struct {
@@ -60,7 +61,7 @@ func (t TwitterResource) RedirecToTwitter(request *restful.Request, response *re
 	var conf = config.KuberConfig
 	fmt.Println(conf)
 
-	fmt.Println("Enter redirect to Twitter")
+	fmt.Println("Enter redirect to Twitter...")
 
 	redirecttUrl := conf.TwitterRedirect
 	if redirecttUrl == "" {
@@ -77,13 +78,14 @@ func (t TwitterResource) RedirecToTwitter(request *restful.Request, response *re
 	fmt.Println("Request URL: " + requestUrl)
 
 	http.Redirect(response.ResponseWriter, request.Request, requestUrl, http.StatusTemporaryRedirect)
-	fmt.Println("Leaving redirect...")
+
+	fmt.Println("Leaving Twitter Redirect...")
 
 }
 
 func (t TwitterResource) GetTwitterToken(request *restful.Request, response *restful.Response) {
 
-	fmt.Println("Enter Twitter Callback.")
+	fmt.Println("Enter Twitter Callback...")
 
 	var twitterUser TwitterUser
 
@@ -94,26 +96,29 @@ func (t TwitterResource) GetTwitterToken(request *restful.Request, response *res
 
 	session, _ := Store.Get(request.Request, SessionName)
 	value := session.Values[SessionKey]
+	/*
+		if value == nil {
+			json.Unmarshal([]byte(`
+					{"username": "", "isAuth": false},
+				`), &twitterUser)
+		} else {
+	*/
+	fmt.Println(tokenKey)
+	fmt.Println(verificationCode)
 
-	if value == nil {
-		json.Unmarshal([]byte(`
-				{"username": "", "isAuth": false},
-			`), &twitterUser)
-	} else {
+	twitterUser, _ = value.(TwitterUser)
+	fmt.Println(twitterUser)
+	_, accessToken, _ := twitterSession.CompleteAuth(tokenKey, verificationCode)
+	/*
+		c, accessToken, _ := twitterSession.CompleteAuth(tokenKey, verificationCode)
+		u, _, _ := c.VerifyCredentials()
+		fmt.Println("User: ", u)
+	*/
+	twitterUser.Oauth_token = tokenKey
+	twitterUser.Oauth_verifier = verificationCode
+	twitterUser.IsAuth = true
 
-		fmt.Println(tokenKey)
-		fmt.Println(verificationCode)
-
-		twitterUser, _ = value.(TwitterUser)
-		fmt.Println(twitterUser)
-
-		twitterSession.CompleteAuth(tokenKey, verificationCode)
-
-		twitterUser.Oauth_token = tokenKey
-		twitterUser.Oauth_verifier = verificationCode
-		twitterUser.IsAuth = true
-
-	}
+	//	}
 
 	fmt.Println(twitterUser)
 	session.Values[SessionKey] = twitterUser
@@ -121,14 +126,20 @@ func (t TwitterResource) GetTwitterToken(request *restful.Request, response *res
 
 	Save(tokenKey, verificationCode)
 
-	redirectURL := fmt.Sprintf(config.KuberConfig.KuberPlane+"/#/auth/twitter/callback?token=%s&code=%s", tokenKey, verificationCode)
+	redirectURL := fmt.Sprintf(config.KuberConfig.KuberPlane+"/#/auth/twitter/callback?token=%s&code=%s&access=%s", tokenKey, verificationCode, accessToken.Token)
 	http.Redirect(response.ResponseWriter, request.Request, redirectURL, http.StatusTemporaryRedirect)
+
+	fmt.Println("Leaving Twitter Callback...")
 
 }
 
 func (t TwitterResource) GetMe(request *restful.Request, response *restful.Response) {
-	me, _, _ := twitterSession.VerifyCredentials()
-	fmt.Println("Me Detail =", me)
+	tw := new(TwitterUser)
+	_ = request.ReadEntity(&tw)
+	fmt.Println("Requested Twitter User: ", tw)
+	c := twitterSession.Clients[tw.Oauth_access_token]
+	me, _, _ := c.VerifyCredentials()
+	fmt.Println("Me:", me)
 	response.WriteEntity(me)
 }
 

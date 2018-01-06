@@ -57,8 +57,8 @@ func Ws(w http.ResponseWriter, r *http.Request) {
 		m := WsMessage{}
 		err = con.ReadJSON(&m)
 		if err != nil {
-			log.Println("Error reading json.", err)
-			internalError(con, "stdout 1:", err)
+			//			log.Println("Error reading json.", err)
+			//			internalError(con, "stdout 1:", err)
 			//			return
 		} else {
 
