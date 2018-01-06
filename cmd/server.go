@@ -116,8 +116,8 @@ func init() {
 	serverCmd.PersistentFlags().StringVar(&argsMicrosoftScope, "microsoft-scope", "User.ReadBasic.All", "")
 	serverCmd.PersistentFlags().StringVar(&argsSpitfireRest, "spitfire-rest", "http://localhost:8091", "")
 	serverCmd.PersistentFlags().StringVar(&argsSpitfireWs, "spitfire-ws", "ws://localhost:8091", "")
-	serverCmd.PersistentFlags().StringVar(&argsTwitterConsumerKey, "twitter-consumer-key", "Fsy5JzXec7wY5mPPsEdsNkAe4", "")
-	serverCmd.PersistentFlags().StringVar(&argsTwitterConsumerSecret, "twitter-consumer-secret", "q0suooaCz17lkiHZZi35OoXfBJrAPRyUBi0AssEppP9YXxBSRz", "")
+	serverCmd.PersistentFlags().StringVar(&argsTwitterConsumerKey, "twitter-consumer-key", "l8kmFysxMIpsSdmCrHa3qWL7d", "")
+	serverCmd.PersistentFlags().StringVar(&argsTwitterConsumerSecret, "twitter-consumer-secret", "t4vRsq41orOzOnPMFYFMydqhgHMfe8NmstZndPUbySWsBTw0Mh", "")
 	serverCmd.PersistentFlags().StringVar(&argsTwitterRedirect, "twitter-redirect", "", "")
 
 	//	viper.BindPFlags(pflag.CommandLine)

@@ -32,16 +32,13 @@ var Store = sessions.NewCookieStore([]byte("twitter-session-secret"))
 var twitterSession *TwitterSession
 
 func (t TwitterResource) WebService() *restful.WebService {
-
 	gob.Register(TwitterUser{})
 	twitterSession = NewTwitterSession(config.KuberConfig.TwitterConsumerKey, config.KuberConfig.TwitterConsumerSecret)
-
 	Store.Options = &sessions.Options{
 		Path:     "/",      // to match all requests
 		MaxAge:   3600 * 1, // 1 hour
 		HttpOnly: false,
 	}
-
 	ws := new(restful.WebService)
 	ws.Path("/api/v1/twitter").
 		Consumes(restful.MIME_JSON).

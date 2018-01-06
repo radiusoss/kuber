@@ -14,7 +14,7 @@ kubectl proxy
 
 Start the `Kuber Server`.
 
-```shell
+```console
 cd $GOPATH/src/github.com/datalayer/kuber
 go run main.go server --apiserver-host=http://localhost:8001
 ```
@@ -23,19 +23,19 @@ We ship a snapshot of the user interface (use the [kuber-plane](https://github.c
 
 You can now browse [http://localhost:9091](http://localhost:9091) or make REST call to the API.
 
-## Manage the Dependencies
+## Manage Dependencies
 
 This repository ships the `vendor` dependencies to ensure comptability.
 
 If you want to get your own dependencies, use the `dep` tool.
 
-```shell
+```console
 dep init
 dep ensure
 ```
 
-## Build a Binary
+## Build Binary
 
-```shell
+```console
 go build
 ```
