@@ -11,23 +11,12 @@ import (
 	"github.com/datalayer/kuber/config"
 	"github.com/datalayer/kuber/log"
 	"github.com/emicklei/go-restful"
-	"github.com/spf13/viper"
 )
 
 type MicrosoftResource struct {
 }
 
-var cff config.Config
-
-func (m MicrosoftResource) WebService(cf config.Config) *restful.WebService {
-
-	cff = cf
-
-	err := viper.Unmarshal(&config.KuberConfig)
-	if err != nil {
-		log.Error("Unable to decode into struct, %v", err)
-	}
-	log.Info("Kuber Config:", config.KuberConfig)
+func (m MicrosoftResource) WebService() *restful.WebService {
 
 	ws := new(restful.WebService)
 	ws.Path("/api/v1/microsoft")
@@ -53,7 +42,7 @@ func (m MicrosoftResource) getAuthorizationCode(request *restful.Request, respon
 
 	hc := http.Client{}
 
-	redirecttUrl := cff.MicrosoftRedirect
+	redirecttUrl := config.KuberConfig.MicrosoftRedirect
 	if redirecttUrl == "" {
 		redirecttUrl = request.Request.URL.String()
 		strings.Replace(redirecttUrl, "", "", 1)
@@ -62,9 +51,9 @@ func (m MicrosoftResource) getAuthorizationCode(request *restful.Request, respon
 	form := url.Values{}
 	form.Add("code", code)
 	form.Add("grant_type", "authorization_code")
-	form.Add("client_id", cff.MicrosoftApplicationId)
-	form.Add("client_secret", cff.MicrosoftSecret)
-	form.Add("scope", cff.MicrosoftScope)
+	form.Add("client_id", config.KuberConfig.MicrosoftApplicationId)
+	form.Add("client_secret", config.KuberConfig.MicrosoftSecret)
+	form.Add("scope", config.KuberConfig.MicrosoftScope)
 	form.Add("redirect_uri", redirecttUrl)
 	log.Info("Form: %v", form)
 
@@ -101,7 +90,7 @@ func (m MicrosoftResource) getAuthorizationCode(request *restful.Request, respon
 	}
 	fmt.Println(data)
 
-	u := cff.KuberPlane + "#/auth/microsoft/callback" + "?access_token=" + data.AccessToken
+	u := config.KuberConfig.KuberPlane + "#/auth/microsoft/callback" + "?access_token=" + data.AccessToken
 	fmt.Println(u)
 	http.Redirect(response.ResponseWriter, request.Request, u, http.StatusTemporaryRedirect)
 

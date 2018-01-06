@@ -13,7 +13,7 @@ import (
 	restful "github.com/emicklei/go-restful"
 )
 
-func SetupGoRestful(wsContainer *restful.Container, cf config.Config) {
+func SetupGoRestful(wsContainer *restful.Container) {
 
 	// Add container filter to enable CORS
 	cors := restful.CrossOriginResourceSharing{
@@ -50,11 +50,11 @@ func SetupGoRestful(wsContainer *restful.Container, cf config.Config) {
 
 	// Microsoft Resources.
 	m := microsoft.MicrosoftResource{}
-	wsContainer.Add(m.WebService(cf))
+	wsContainer.Add(m.WebService())
 
 	// Twitter Resources.
 	tw := twitter.TwitterResource{}
-	wsContainer.Add(tw.WebService(cf))
+	wsContainer.Add(tw.WebService())
 
 	// User Resources.
 	u := user.UserResource{map[string]user.User{}}

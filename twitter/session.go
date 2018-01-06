@@ -7,9 +7,9 @@ import (
 	"github.com/mrjones/oauth"
 )
 
-func NewServerClient(consumerKey, consumerSecret string) *ServerClient {
+func NewTwitterSession(consumerKey, consumerSecret string) *TwitterSession {
 
-	newServer := new(ServerClient)
+	newServer := new(TwitterSession)
 
 	newServer.OAuthConsumer = oauth.NewConsumer(
 		consumerKey,
@@ -29,13 +29,13 @@ func NewServerClient(consumerKey, consumerSecret string) *ServerClient {
 	return newServer
 }
 
-type ServerClient struct {
+type TwitterSession struct {
 	Client
 	OAuthConsumer *oauth.Consumer
 	OAuthTokens   map[string]*oauth.RequestToken
 }
 
-func (s *ServerClient) GetAuthURL(tokenUrl string) string {
+func (s *TwitterSession) GetAuthURL(tokenUrl string) string {
 	token, requestUrl, err := s.OAuthConsumer.GetRequestTokenAndUrl(tokenUrl)
 	if err != nil {
 		log.Println(err)
@@ -45,7 +45,7 @@ func (s *ServerClient) GetAuthURL(tokenUrl string) string {
 	return requestUrl
 }
 
-func (s *ServerClient) CompleteAuth(tokenKey, verificationCode string) error {
+func (s *TwitterSession) CompleteAuth(tokenKey, verificationCode string) error {
 	accessToken, err := s.OAuthConsumer.AuthorizeToken(s.OAuthTokens[tokenKey], verificationCode)
 	if err != nil {
 		log.Println(err)

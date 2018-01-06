@@ -167,7 +167,7 @@ func serveAlone() {
 				handlers.CORS(gorilla.CredentialsOk(), gorilla.OriginsOk(), gorilla.HeadersOk(), gorilla.MethodsOk())(r))))
 	*/
 	wsContainer := restful.NewContainer()
-	rest.SetupGoRestful(wsContainer, config.KuberConfig)
+	rest.SetupGoRestful(wsContainer)
 	server := &http.Server{Addr: ":" + strconv.Itoa(argInsecurePort), Handler: wsContainer}
 	log.Fatal(server.ListenAndServe())
 }
@@ -215,7 +215,7 @@ func serveWithK8s() {
 		handleFatalInitError(err)
 	}
 
-	rest.SetupGoRestful(apiHandler, config.KuberConfig)
+	rest.SetupGoRestful(apiHandler)
 
 	if argAutoGenerateCertificates {
 		log.Println("Auto-generating certificates")

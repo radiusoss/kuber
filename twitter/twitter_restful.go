@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/datalayer/kuber/config"
 	"github.com/emicklei/go-restful"
 	"github.com/gorilla/sessions"
-	"github.com/spf13/viper"
 )
 
 type TwitterUser struct {
@@ -28,23 +28,12 @@ var SessionKey = "twitter-state"
 
 var Store = sessions.NewCookieStore([]byte("twitter-session-secret"))
 
-var cff config.Config
+var twitterSession *TwitterSession
 
-var TwitterClient *ServerClient
-
-func (t TwitterResource) WebService(cf config.Config) *restful.WebService {
-
-	cff = cf
+func (t TwitterResource) WebService() *restful.WebService {
 
 	gob.Register(TwitterUser{})
-
-	err := viper.Unmarshal(&config.KuberConfig)
-	if err != nil {
-		log.Fatalf("Unable to decode into struct, %v", err)
-	}
-	log.Println("Kuber Config:", config.KuberConfig)
-
-	TwitterClient = NewServerClient(cf.TwitterConsumerKey, cf.TwitterConsumerSecret)
+	twitterSession = NewTwitterSession(config.KuberConfig.TwitterConsumerKey, config.KuberConfig.TwitterConsumerSecret)
 
 	Store.Options = &sessions.Options{
 		Path:     "/",      // to match all requests
@@ -56,16 +45,18 @@ func (t TwitterResource) WebService(cf config.Config) *restful.WebService {
 	ws.Path("/api/v1/twitter").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
-	ws.Route(ws.GET("/").To(t.RedirectUserToTwitterRestful))
-	ws.Route(ws.GET("/callback").To(t.GetTwitterTokenRestful))
-	ws.Route(ws.GET("/me").To(t.GetMeDetailRestful))
-	ws.Route(ws.GET("/follow").To(t.GetFollowerRestful))
-	ws.Route(ws.GET("/followids").To(t.GetFollowerIDsRestful))
-	ws.Route(ws.GET("/time").To(t.GetTimeLineRestful))
+	ws.Route(ws.GET("/").To(t.RedirecToTwitter))
+	ws.Route(ws.GET("/callback").To(t.GetTwitterToken))
+	ws.Route(ws.POST("/me").To(t.GetMe))
+	/*
+		ws.Route(ws.GET("/follow").To(t.GetFollower))
+		ws.Route(ws.GET("/followids").To(t.GetFollowerIDs))
+		ws.Route(ws.GET("/time").To(t.GetTimeLine))
+	*/
 	return ws
 }
 
-func (t TwitterResource) RedirectUserToTwitterRestful(request *restful.Request, response *restful.Response) {
+func (t TwitterResource) RedirecToTwitter(request *restful.Request, response *restful.Response) {
 	var conf = config.KuberConfig
 	fmt.Println(conf)
 
@@ -74,21 +65,15 @@ func (t TwitterResource) RedirectUserToTwitterRestful(request *restful.Request, 
 	redirecttUrl := conf.TwitterRedirect
 	if redirecttUrl == "" {
 		scheme := "https"
-		/*
-			if request.Request.TLS != nil {
-				scheme = "https"
-			}
-		*/
 		host := request.Request.Host
-		if host == "" {
-			host = "localhost:9091"
+		if strings.HasPrefix(host, "localhost") {
 			scheme = "http"
 		}
 		redirecttUrl = scheme + "://" + host + "/api/v1/twitter/callback"
 	}
 	fmt.Println("Callback URL=", redirecttUrl)
 
-	requestUrl := TwitterClient.GetAuthURL(redirecttUrl)
+	requestUrl := twitterSession.GetAuthURL(redirecttUrl)
 	fmt.Println("Request URL: " + requestUrl)
 
 	http.Redirect(response.ResponseWriter, request.Request, requestUrl, http.StatusTemporaryRedirect)
@@ -96,7 +81,7 @@ func (t TwitterResource) RedirectUserToTwitterRestful(request *restful.Request, 
 
 }
 
-func (t TwitterResource) GetTwitterTokenRestful(request *restful.Request, response *restful.Response) {
+func (t TwitterResource) GetTwitterToken(request *restful.Request, response *restful.Response) {
 
 	fmt.Println("Enter Twitter Callback.")
 
@@ -122,7 +107,7 @@ func (t TwitterResource) GetTwitterTokenRestful(request *restful.Request, respon
 		twitterUser, _ = value.(TwitterUser)
 		fmt.Println(twitterUser)
 
-		TwitterClient.CompleteAuth(tokenKey, verificationCode)
+		twitterSession.CompleteAuth(tokenKey, verificationCode)
 
 		twitterUser.Oauth_token = tokenKey
 		twitterUser.Oauth_verifier = verificationCode
@@ -136,29 +121,30 @@ func (t TwitterResource) GetTwitterTokenRestful(request *restful.Request, respon
 
 	Save(tokenKey, verificationCode)
 
-	redirectURL := fmt.Sprintf(cff.KuberPlane+"#/auth/twitter/callback?token=%s&code=%s", tokenKey, verificationCode)
+	redirectURL := fmt.Sprintf(config.KuberConfig.KuberPlane+"/#/auth/twitter/callback?token=%s&code=%s", tokenKey, verificationCode)
 	http.Redirect(response.ResponseWriter, request.Request, redirectURL, http.StatusTemporaryRedirect)
 
 }
 
-func (t TwitterResource) GetMeDetailRestful(request *restful.Request, response *restful.Response) {
-	me, _, _ := TwitterClient.VerifyCredentials()
+func (t TwitterResource) GetMe(request *restful.Request, response *restful.Response) {
+	me, _, _ := twitterSession.VerifyCredentials()
 	fmt.Println("Me Detail =", me)
 	response.WriteEntity(me)
 }
 
-func (t TwitterResource) GetTimeLineRestful(request *restful.Request, response *restful.Response) {
+/*
+func (t TwitterResource) GetTimeLine(request *restful.Request, response *restful.Response) {
 	GetTimeLine(response.ResponseWriter, request.Request)
 }
 
-func (t TwitterResource) GetFollowerRestful(request *restful.Request, response *restful.Response) {
+func (t TwitterResource) GetFollower(request *restful.Request, response *restful.Response) {
 	GetFollower(response.ResponseWriter, request.Request)
 }
 
-func (t TwitterResource) GetFollowerIDsRestful(request *restful.Request, response *restful.Response) {
+func (t TwitterResource) GetFollowerIDs(request *restful.Request, response *restful.Response) {
 	GetFollowerIDs(response.ResponseWriter, request.Request)
 }
-
+*/
 func isAuth(w http.ResponseWriter, r *http.Request) bool {
 	session, _ := Store.Get(r, SessionName)
 	value := session.Values[SessionKey]
