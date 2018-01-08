@@ -130,7 +130,7 @@ func (m MicrosoftResource) Callback(request *restful.Request, response *restful.
 			if strings.HasPrefix(host, "localhost") {
 				scheme = "http"
 			}
-			u = scheme + "://" + host + "#/auth/microsoft/callback" + "?access_token=" + data.AccessToken
+			u = scheme + "://" + host + "/#/auth/microsoft/callback" + "?access_token=" + data.AccessToken
 		}
 
 		fmt.Println("Redirecting after callback to:", u)

@@ -8,6 +8,10 @@ import (
 	"github.com/kris-nova/kubicorn/cutil/uuid"
 )
 
+/*
+eu-central-1 ami-1c45e273
+us-west-2    ami-835b4efa
+*/
 func NewUbuntuCluster(name string) *cluster.Cluster {
 	return &cluster.Cluster{
 		Name:     name,
@@ -166,7 +170,7 @@ func NewUbuntuCluster(name string) *cluster.Cluster {
 					},
 				},
 				AwsConfiguration: &cluster.AwsConfiguration{
-					SpotPrice: "0.4",
+					SpotPrice: "0.6",
 				},
 				Firewalls: []*cluster.Firewall{
 					{
