@@ -43,7 +43,7 @@ func NewUbuntuCluster(name string) *cluster.Cluster {
 				Image:    "ami-835b4efa",
 				Size:     "t2.xlarge",
 				BootstrapScripts: []string{
-					"aws/aws_k8s_ubuntu_16.04_master.sh",
+					"https://raw.githubusercontent.com/datalayer/kuber/master/aws/aws_k8s_ubuntu_16.04_master.sh",
 				},
 				InstanceProfile: &cluster.IAMInstanceProfile{
 					Name: fmt.Sprintf("%s-KubicornMasterInstanceProfile", name),
@@ -126,7 +126,7 @@ func NewUbuntuCluster(name string) *cluster.Cluster {
 				Image:    "ami-835b4efa",
 				Size:     "c3.4xlarge",
 				BootstrapScripts: []string{
-					"aws/aws_k8s_ubuntu_16.04_node.sh",
+					"https://raw.githubusercontent.com/datalayer/kuber/master/aws/aws_k8s_ubuntu_16.04_node.sh",
 				},
 				InstanceProfile: &cluster.IAMInstanceProfile{
 					Name: fmt.Sprintf("%s-KubicornNodeInstanceProfile", name),
@@ -170,7 +170,7 @@ func NewUbuntuCluster(name string) *cluster.Cluster {
 					},
 				},
 				AwsConfiguration: &cluster.AwsConfiguration{
-					SpotPrice: "0.6",
+				//					SpotPrice: "0.6",
 				},
 				Firewalls: []*cluster.Firewall{
 					{

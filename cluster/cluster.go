@@ -21,7 +21,7 @@ type KuberCluster struct {
 	Azure            azure.AzureKuberCluster
 }
 
-var stateStorePath = util.GetUserHome() + "/.datalayer/kubicorn/_state"
+var stateStorePath = util.GetUserHome() + "/.datalayer/clusters/_state"
 
 func init() {
 	logger.Level = 4
