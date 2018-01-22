@@ -1,14 +1,16 @@
 [![Datalayer](http://datalayer.io/img/logo-datalayer-horizontal.png)](http://datalayer.io)
 
-This folder contains the `Golang` REST and WebSocket server for `Kuber`.
+This folder contains the `Golang` source code for `Kuber`, a tool to create and operate Kubernetes clusters.
+
+It ships a REST and WebSocket server and a CLI (Command Line Interface).
+
+## Usage
 
 `git clone` this repository in your `go` path.
 
-## Hack Source Code
-
 Start the `K8S Proxy`.
 
-```
+```console
 kubectl proxy
 ```
 
@@ -41,11 +43,11 @@ dep init
 dep ensure
 ```
 
-## Create a K8S Cluster
+## K8S Cluster
 
-From your Linux laptop (with [Helm](https://github.com/kubernetes/helm/releases) available), run the following.
+From your Linux laptop with [Helm](https://github.com/kubernetes/helm/releases) available, run the following.
 
-```
+```shell
 export AWS_ACCESS_KEY_ID=<your-aws-key-id>
 export AWS_SECRET_ACCESS_KEY=<your-aws-key-secret>
 kuber create kuber -p aws
@@ -54,12 +56,12 @@ kuber apply kuber -v 4
 
 Check the cluster is running.
 
-```
+```console
 watch kubectl get nodes; watch kubectl get pods --all-namespaces; kubectl proxy
 ```
 
 Delete the cluster.
 
-```
+```console
 kuber delete kuber -v 4 --purge
 ```
