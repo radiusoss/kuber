@@ -8,15 +8,12 @@ import (
 	"github.com/kris-nova/kubicorn/cutil/uuid"
 )
 
-/*
-eu-central-1 ami-1c45e273
-us-west-2    ami-835b4efa
-*/
-func NewUbuntuCluster(name string) *cluster.Cluster {
+func NewUbuntuCluster(name string, zone string, image string) *cluster.Cluster {
+
 	return &cluster.Cluster{
 		Name:     name,
 		Cloud:    cluster.CloudAmazon,
-		Location: "us-west-2",
+		Location: zone,
 		SSH: &cluster.SSH{
 			PublicKeyPath: "~/.ssh/id_rsa.pub",
 			User:          "ubuntu",
@@ -40,7 +37,7 @@ func NewUbuntuCluster(name string) *cluster.Cluster {
 				Name:     fmt.Sprintf("%s.master", name),
 				MaxCount: 1,
 				MinCount: 1,
-				Image:    "ami-835b4efa",
+				Image:    image,
 				Size:     "t2.xlarge",
 				BootstrapScripts: []string{
 					"https://raw.githubusercontent.com/datalayer/kuber/master/aws/aws_k8s_ubuntu_16.04_master.sh",
@@ -82,7 +79,7 @@ func NewUbuntuCluster(name string) *cluster.Cluster {
 					{
 						Name: fmt.Sprintf("%s.master", name),
 						CIDR: "10.0.0.0/24",
-						Zone: "us-west-2a",
+						Zone: zone + "a",
 					},
 				},
 				AwsConfiguration: &cluster.AwsConfiguration{},
@@ -123,7 +120,7 @@ func NewUbuntuCluster(name string) *cluster.Cluster {
 				Name:     fmt.Sprintf("%s.node", name),
 				MaxCount: 3,
 				MinCount: 3,
-				Image:    "ami-835b4efa",
+				Image:    image,
 				Size:     "c3.4xlarge",
 				BootstrapScripts: []string{
 					"https://raw.githubusercontent.com/datalayer/kuber/master/aws/aws_k8s_ubuntu_16.04_node.sh",
@@ -166,7 +163,7 @@ func NewUbuntuCluster(name string) *cluster.Cluster {
 					{
 						Name: fmt.Sprintf("%s.node", name),
 						CIDR: "10.0.100.0/24",
-						Zone: "us-west-2a",
+						Zone: zone + "a",
 					},
 				},
 				AwsConfiguration: &cluster.AwsConfiguration{

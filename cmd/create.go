@@ -57,7 +57,7 @@ func CreateCmd() *cobra.Command {
 	After a model is defined and configured properly, the user can then apply the model.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 0 {
-				co.Name = strEnvDef("KUBICORN_NAME", namer.RandomName())
+				co.Name = strEnvDef("KUBER_NAME", namer.RandomName())
 			} else if len(args) > 1 {
 				logger.Critical("Too many arguments.")
 				os.Exit(1)
@@ -74,12 +74,13 @@ func CreateCmd() *cobra.Command {
 		},
 	}
 
-	createCmd.Flags().StringVarP(&co.StateStore, "state-store", "s", strEnvDef("KUBICORN_STATE_STORE", "fs"), "The state store type to use for the cluster")
-	createCmd.Flags().StringVarP(&co.StateStorePath, "state-store-path", "S", strEnvDef("KUBICORN_STATE_STORE_PATH", util.GetUserHome()+"/.datalayer/clusters/_state"), "The state store path to use")
-	createCmd.Flags().StringVarP(&co.Profile, "profile", "p", strEnvDef("KUBICORN_PROFILE", "aws"), "The cluster profile to use")
-	createCmd.Flags().StringVarP(&co.CloudId, "cloudid", "c", strEnvDef("KUBICORN_CLOUDID", ""), "The cloud id")
-	createCmd.Flags().StringVarP(&co.Set, "set", "e", strEnvDef("KUBICORN_SET", ""), "set cluster setting")
-	createCmd.Flags().StringVarP(&co.GitRemote, "git-config", "g", strEnvDef("KUBICORN_GIT_CONFIG", "git"), "The git remote url to use")
+	createCmd.Flags().StringVarP(&co.StateStore, "state-store", "s", strEnvDef("KUBER_STATE_STORE", "fs"), "The state store type to use for the cluster")
+	createCmd.Flags().StringVarP(&co.StateStorePath, "state-store-path", "S", strEnvDef("KUBER_STATE_STORE_PATH", util.GetUserHome()+"/.datalayer/clusters/_state"), "The state store path to use")
+	createCmd.Flags().StringVarP(&co.Profile, "profile", "p", strEnvDef("KUBER_PROFILE", "aws"), "The cluster profile to use")
+	createCmd.Flags().StringVarP(&co.Zone, "zone", "z", strEnvDef("KUBER_ZONE", "us-west-2"), "The cloud zone")
+	createCmd.Flags().StringVarP(&co.CloudId, "cloudid", "c", strEnvDef("KUBER_CLOUDID", ""), "The cloud id")
+	createCmd.Flags().StringVarP(&co.Set, "set", "e", strEnvDef("KUBER_SET", ""), "set cluster setting")
+	createCmd.Flags().StringVarP(&co.GitRemote, "git-config", "g", strEnvDef("KUBER_GIT_CONFIG", "git"), "The git remote url to use")
 
 	flagApplyAnnotations(createCmd, "profile", "__kubicorn_parse_profiles")
 	flagApplyAnnotations(createCmd, "cloudid", "__kubicorn_parse_cloudid")
@@ -87,7 +88,7 @@ func CreateCmd() *cobra.Command {
 	return createCmd
 }
 
-type profileFunc func(name string) *cluster.Cluster
+type profileFunc func(name string, zone string, image string) *cluster.Cluster
 
 type profileMap struct {
 	profileFunc profileFunc
@@ -108,7 +109,14 @@ func RunCreate(options *CreateOptions) error {
 	name := options.Name
 	var newCluster *cluster.Cluster
 	if _, ok := profileMapIndexed[options.Profile]; ok {
-		newCluster = profileMapIndexed[options.Profile].profileFunc(name)
+		image := ""
+		if options.Zone == "eu-central-1" {
+			image = "ami-1c45e273"
+		}
+		if options.Zone == "us-west-2" {
+			image = "ami-835b4efa"
+		}
+		newCluster = profileMapIndexed[options.Profile].profileFunc(name, options.Zone, image)
 	} else {
 		return fmt.Errorf("Invalid profile [%s]", options.Profile)
 	}
@@ -181,7 +189,7 @@ func RunCreate(options *CreateOptions) error {
 		return fmt.Errorf("Unable to init state store: %v", err)
 	}
 
-	logger.Always("The state [%s/%s/cluster.yaml] has been created. You can edit the file, then run `kubicorn apply %s`", options.StateStorePath, name, name)
+	logger.Always("The state [%s/%s/cluster.yaml] has been created. You can edit the file, then run `kuber apply %s`", options.StateStorePath, name, name)
 	return nil
 }
 

@@ -8,13 +8,18 @@ It ships a REST and WebSocket server and a CLI (Command Line Interface).
 
 `git clone` this repository in your `go` path.
 
+```console
+cd $GOPATH/src/github.com/datalayer
+git clone https://github.com/datalayer/kuber.git
+```
+
 Start the `K8S Proxy`.
 
 ```console
 kubectl proxy
 ```
 
-Start the `Kuber Server`.
+You can now start the `Kuber Server`.
 
 ```console
 cd $GOPATH/src/github.com/datalayer/kuber
