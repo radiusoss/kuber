@@ -41,6 +41,7 @@ import (
 type CreateOptions struct {
 	kc.Options
 	Profile string
+	Zone    string
 }
 
 var co = &CreateOptions{}
