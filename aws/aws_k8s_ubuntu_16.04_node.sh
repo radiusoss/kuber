@@ -71,7 +71,7 @@ EOF
 kubeadm join --config=/root/kubeadm-aws-join.conf
 
 HOSTNAME=$(hostname -f)
-kubectl label nodes ${HOSTNAME} kuber-role=worker
+KUBECONFIG=/etc/kubernetes/kubelet.conf kubectl label nodes ${HOSTNAME} kuber-role=worker
 
 # systemctl restart kubelet
 reboot
