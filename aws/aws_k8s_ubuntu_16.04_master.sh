@@ -116,6 +116,8 @@ cp /etc/kubernetes/admin.conf ~/.kube/config
 
 alias k=kubectl
 
+kubectl label nodes ${HOSTNAME} kuber-role=master
+
 function setup_rbac() {
   cat << EOF | kubectl apply -f -
 apiVersion: rbac.authorization.k8s.io/v1beta1
