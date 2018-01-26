@@ -159,11 +159,7 @@ function install_helm() {
 setup_rbac
 install_helm
 
-helm install -n heapster \
-  --namespace kube-system \
-  stable/heapster
-
-helm install stable/kubernetes-dashboard \
-  --namespace kube-system \
-  --set=httpPort=3000,resources.limits.cpu=200m,rbac.create=true \
-  -n k8s-dashboard
+git clone https://github.com/datalayer/helm-charts
+cd helm-charts
+./deploy-chart.sh heapster
+./deploy-chart.sh dashboard
