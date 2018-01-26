@@ -27,9 +27,11 @@ sh -c 'echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/so
 # Has to be configured before installing kubelet, or kubelet has to be restarted to pick up changes
 mkdir -p /etc/systemd/system/kubelet.service.d
 touch /etc/systemd/system/kubelet.service.d/20-cloud-provider.conf
+# Do we need to tune the docker pull timeout? It does not seem to give good results...
+# --runtime-request-timeout 4m0s
 cat << EOF  > /etc/systemd/system/kubelet.service.d/20-cloud-provider.conf
 [Service]
-Environment="KUBELET_EXTRA_ARGS=--cloud-provider=aws --runtime-request-timeout 4m0s"
+Environment="KUBELET_EXTRA_ARGS=--cloud-provider=aws --runtime-request-timeout 10m0s"
 EOF
 
 chmod 0600 /etc/systemd/system/kubelet.service.d/20-cloud-provider.conf
