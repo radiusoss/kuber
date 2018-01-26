@@ -162,7 +162,7 @@ install_helm
 # git clone https://github.com/datalayer/helm-charts
 # cd helm-charts
 # ./deploy-chart.sh heapster
-# ./deploy-chart.sh dashboard
+# ./deploy-chart.sh k8s-dashboard
 
 # helm install -n heapster \
 #   --namespace kube-system \
