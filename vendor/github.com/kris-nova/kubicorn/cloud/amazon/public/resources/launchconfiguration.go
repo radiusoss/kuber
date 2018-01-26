@@ -158,6 +158,10 @@ func (r *Lc) Apply(actual, expected cloud.Resource, immutable *cluster.Cluster) 
 			input := &ec2.DescribeInstancesInput{
 				Filters: []*ec2.Filter{
 					{
+						Name:   S("tag:Cost"),
+						Values: []*string{S("kuber")},
+					},
+					{
 						Name:   S("tag:Name"),
 						Values: []*string{S(fmt.Sprintf("%s.master", immutable.Name))},
 					},

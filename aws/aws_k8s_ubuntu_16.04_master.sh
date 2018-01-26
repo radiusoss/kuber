@@ -11,8 +11,6 @@ echo $INSTANCEID
 REGION=`curl http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\" '{print $4}'`
 echo $REGION
 
-aws ec2 create-tags --resources ${INSTANCEID} --region ${REGION} --tags Key=Cost,Value=kuber
-
 OUTPUT="text"
 # Check if instance has a public IP from Elastic pool assigned
 PUBLICIPASSIGNED=`aws ec2 describe-addresses --output ${OUTPUT} --region ${REGION} | grep ${INSTANCEID} | wc -l`
@@ -35,6 +33,8 @@ else
     aws ec2 associate-address --output ${OUTPUT} --region ${REGION} --instance-id ${INSTANCEID} --public-ip ${IP}
   fi
 fi
+
+aws ec2 create-tags --resources ${INSTANCEID} --region ${REGION} --tags Key=Cost,Value=kuber
 
 # Specify the Kubernetes version to use
 KUBERNETES_VERSION="1.8.6"
