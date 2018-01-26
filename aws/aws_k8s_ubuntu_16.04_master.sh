@@ -5,7 +5,7 @@
 # ------------------------------------------------------------------------------------------------------------------------
 
 # Specify the Kubernetes version to use
-KUBERNETES_VERSION="1.8.6"
+KUBERNETES_VERSION="1.9.2"
 
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 touch /etc/apt/sources.list.d/kubernetes.list
@@ -16,7 +16,7 @@ mkdir -p /etc/systemd/system/kubelet.service.d
 touch /etc/systemd/system/kubelet.service.d/20-cloud-provider.conf
 cat << EOF  > /etc/systemd/system/kubelet.service.d/20-cloud-provider.conf
 [Service]
-Environment="KUBELET_EXTRA_ARGS=--cloud-provider=aws"
+Environment="KUBELET_EXTRA_ARGS=--cloud-provider=aws --runtime-request-timeout 4m0s"
 EOF
 
 chmod 0600 /etc/systemd/system/kubelet.service.d/20-cloud-provider.conf
