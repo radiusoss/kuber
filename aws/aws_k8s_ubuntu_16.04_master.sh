@@ -117,6 +117,10 @@ cp /etc/kubernetes/admin.conf ~/.kube/config
 alias k=kubectl
 
 kubectl label nodes ${HOSTNAME} kuber-role=master
+# Taint master to host pods.
+# This will remove the node-role.kubernetes.io/master taint from any nodes that have it, including the master node, 
+# meaning that the scheduler will then be able to schedule pods everywhere.
+kubectl taint nodes --all node-role.kubernetes.io/master-
 
 function setup_rbac() {
   cat << EOF | kubectl apply -f -
