@@ -37,7 +37,7 @@ else
 fi
 
 # Specify the Kubernetes version to use
-KUBERNETES_VERSION="1.9.2"
+KUBERNETES_VERSION="1.8.6"
 
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 touch /etc/apt/sources.list.d/kubernetes.list
