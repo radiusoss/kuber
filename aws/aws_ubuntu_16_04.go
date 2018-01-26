@@ -138,6 +138,7 @@ func NewUbuntuCluster(name string, zone string, image string) *cluster.Cluster {
 									 {
 										"Effect": "Allow",
 										"Action": [
+										   "ec2:ResourceTag",
 										   "ec2:Describe*",
 										   "ec2:AttachVolume",
 										   "ec2:DetachVolume",

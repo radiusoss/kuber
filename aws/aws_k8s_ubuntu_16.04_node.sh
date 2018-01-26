@@ -4,6 +4,15 @@
 # and the shell script real work. If you need conditional logic, write it in bash or make another shell script.
 # ------------------------------------------------------------------------------------------------------------------------
 
+apt install -y awscli
+
+INSTANCEID=`/usr/bin/curl -s http://169.254.169.254/latest/meta-data/instance-id`
+echo $INSTANCEID
+REGION=`curl http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\" '{print $4}'`
+echo $REGION
+
+aws ec2 create-tags --resources ${INSTANCEID} --region ${REGION} --tags Key=Cost,Value=kuber
+
 rm -fr /var/lib/docker
 mkdir /mnt/docker
 ln -s /mnt/docker /var/lib/docker

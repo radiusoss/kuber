@@ -4,6 +4,38 @@
 # and the shell script real work. If you need conditional logic, write it in bash or make another shell script.
 # ------------------------------------------------------------------------------------------------------------------------
 
+apt install -y awscli
+
+INSTANCEID=`/usr/bin/curl -s http://169.254.169.254/latest/meta-data/instance-id`
+echo $INSTANCEID
+REGION=`curl http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\" '{print $4}'`
+echo $REGION
+
+aws ec2 create-tags --resources ${INSTANCEID} --region ${REGION} --tags Key=Cost,Value=kuber
+
+OUTPUT="text"
+# Check if instance has a public IP from Elastic pool assigned
+PUBLICIPASSIGNED=`aws ec2 describe-addresses --output ${OUTPUT} --region ${REGION} | grep ${INSTANCEID} | wc -l`
+if [ ${PUBLICIPASSIGNED} -gt 0 ]
+then
+  # Instance has (at least) one Public IP associated from Elastic pool.
+  IP=`aws ec2 describe-addresses --output ${OUTPUT} --region ${REGION} | grep ${INSTANCEID} | head -1 | awk '{ print $NF; }'`
+  echo "Alreay running with IP from EIP pool: "$IP
+else
+  # Get IP address from Elastic pool
+  IP=`aws ec2 describe-addresses --output ${OUTPUT} --region ${REGION} | grep -v 'i-' | head -1 | awk '{ print $NF; }'`
+  echo "Found IP in EIP pool: "$IP
+  if [ "${IP}" = "" ]
+  then
+    # Public IP on Elastic pool unavailable...
+    echo "Free Public IP inside Elastic pool in ${REGION} region unavailable"
+  else
+    # Attach Public IP from Elastic pool
+    echo "Attaching IP from EIP pool: "$IP
+    aws ec2 associate-address --output ${OUTPUT} --region ${REGION} --instance-id ${INSTANCEID} --public-ip ${IP}
+  fi
+fi
+
 # Specify the Kubernetes version to use
 KUBERNETES_VERSION="1.9.2"
 
