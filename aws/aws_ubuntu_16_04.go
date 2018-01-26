@@ -138,19 +138,19 @@ func NewUbuntuCluster(name string, zone string, image string) *cluster.Cluster {
 									 {
 										"Effect": "Allow",
 										"Action": [
-										   "ec2:ResourceTag",
-										   "ec2:Describe*",
-										   "ec2:AttachVolume",
-										   "ec2:DetachVolume",
-										   "ecr:GetAuthorizationToken",
-										   "ecr:BatchCheckLayerAvailability",
-										   "ecr:GetDownloadUrlForLayer",
-										   "ecr:GetRepositoryPolicy",
-										   "ecr:DescribeRepositories",
-										   "ecr:ListImages",
-										   "ecr:BatchGetImage",
-										   "autoscaling:DescribeAutoScalingGroups",
-										   "autoscaling:UpdateAutoScalingGroup"
+											"ec2:*",
+											"ec2:Describe*",
+											"ec2:AttachVolume",
+											"ec2:DetachVolume",
+											"ecr:GetAuthorizationToken",
+											"ecr:BatchCheckLayerAvailability",
+											"ecr:GetDownloadUrlForLayer",
+											"ecr:GetRepositoryPolicy",
+											"ecr:DescribeRepositories",
+											"ecr:ListImages",
+											"ecr:BatchGetImage",
+											"autoscaling:DescribeAutoScalingGroups",
+											"autoscaling:UpdateAutoScalingGroup"
 										],
 										"Resource": "*"
 									 }
