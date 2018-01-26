@@ -31,7 +31,7 @@ touch /etc/systemd/system/kubelet.service.d/20-cloud-provider.conf
 # --runtime-request-timeout 4m0s
 cat << EOF  > /etc/systemd/system/kubelet.service.d/20-cloud-provider.conf
 [Service]
-Environment="KUBELET_EXTRA_ARGS=--cloud-provider=aws --runtime-request-timeout 10m0s"
+Environment="KUBELET_EXTRA_ARGS=--cloud-provider=aws"
 EOF
 
 chmod 0600 /etc/systemd/system/kubelet.service.d/20-cloud-provider.conf
