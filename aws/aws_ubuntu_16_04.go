@@ -167,7 +167,7 @@ func NewUbuntuCluster(name string, zone string, image string) *cluster.Cluster {
 					},
 				},
 				AwsConfiguration: &cluster.AwsConfiguration{
-				//					SpotPrice: "0.6",
+					SpotPrice: "0.6",
 				},
 				Firewalls: []*cluster.Firewall{
 					{
