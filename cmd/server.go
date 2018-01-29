@@ -228,7 +228,7 @@ func serveWithK8s() {
 	// TODO(bryk): Disable directory listing.
 	//	http.Handle("/", handler.MakeGzipHandler(handler.CreateLocaleHandler()))
 
-	http.Handle("/", handler.MakeGzipHandler(http.FileServer(http.Dir("./_plane/"))))
+	http.Handle("/", handler.MakeGzipHandler(http.FileServer(http.Dir("./_board/"))))
 
 	http.Handle("/api/", apiHandler)
 	// TODO(maciaszczykm): Move to /appConfig.json as it was discussed in #640.
