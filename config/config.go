@@ -4,7 +4,7 @@ var KuberConfig Config
 
 type Config struct {
 	Hdfs                   string `json:"hdfs"`
-	KuberPlane             string `json:"kuberPlane"`
+	KuberBoard             string `json:"kuberBoard"`
 	KuberRest              string `json:"kuberRest"`
 	KuberWs                string `json:"kuberWs"`
 	MicrosoftApplicationId string `json:"microsoftApplicationId"`

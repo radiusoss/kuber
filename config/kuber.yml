@@ -1,7 +1,7 @@
 microsoftApplicationId: f145fb87-901d-4519-ad39-573c30770e6f
 microsoftRedirect: http://localhost:4326
 microsoftScope: User.ReadBasic.All+Contacts.Read+Mail.Send+Files.ReadWrite+Notes.ReadWrite
-kuberPlane: http://localhost:4326
+kuberBoard: http://localhost:4326
 kuberRest: http://localhost:9091
 kuberWs: ws://localhost:9091
 spitfireRest: http://localhost:8091
