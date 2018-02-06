@@ -131,9 +131,11 @@ func (m MicrosoftResource) Callback(request *restful.Request, response *restful.
 				scheme = "http"
 			}
 			u = scheme + "://" + host + "/#/auth/microsoft/callback" + "?access_token=" + data.AccessToken
+		} else {
+			u = u + "/#/auth/microsoft/callback" + "?access_token=" + data.AccessToken
 		}
 
-		fmt.Println("Redirecting after callback to:", u)
+		fmt.Println("Redirecting after Microsoft callback to:", u)
 
 		http.Redirect(response.ResponseWriter, request.Request, u, http.StatusTemporaryRedirect)
 

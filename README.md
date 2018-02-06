@@ -19,7 +19,7 @@ Start the `K8S Proxy`.
 kubectl proxy
 ```
 
-You can now start the `Kuber Server`.
+You can now start the `Kuber Server` to develop.
 
 ```shell
 cd $GOPATH/src/github.com/datalayer/kuber
