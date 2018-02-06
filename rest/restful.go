@@ -4,6 +4,7 @@ import (
 	"github.com/datalayer/kuber/cloud"
 	"github.com/datalayer/kuber/cluster"
 	"github.com/datalayer/kuber/config"
+	"github.com/datalayer/kuber/google"
 	"github.com/datalayer/kuber/helm"
 	"github.com/datalayer/kuber/microsoft"
 	"github.com/datalayer/kuber/spl"
@@ -47,6 +48,10 @@ func SetupGoRestful(wsContainer *restful.Container) {
 	// Helm Resources.
 	h := helm.HelmResource{}
 	wsContainer.Add(h.WebService())
+
+	// Google Resources.
+	g := google.GoogleResource{}
+	wsContainer.Add(g.WebService())
 
 	// Microsoft Resources.
 	m := microsoft.MicrosoftResource{}

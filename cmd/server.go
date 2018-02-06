@@ -55,6 +55,11 @@ var (
 	argsKuberBoard              string
 	argsKuberRest               string
 	argsKuberWs                 string
+	argsGoogleClientId          string
+	argsGoogleRedirect          string
+	argsGoogleSecret            string
+	argsGoogleScope             string
+	argsGoogleApiKey            string
 	argsMicrosoftApplicationId  string
 	argsMicrosoftRedirect       string
 	argsMicrosoftSecret         string
@@ -109,13 +114,22 @@ func init() {
 	serverCmd.PersistentFlags().StringVar(&argsKuberBoard, "kuber-board", "http://localhost:4326", "")
 	serverCmd.PersistentFlags().StringVar(&argsKuberRest, "kuber-rest", "http://localhost:9091", "")
 	serverCmd.PersistentFlags().StringVar(&argsKuberWs, "kuber-ws", "ws://localhost:9091", "")
+
+	serverCmd.PersistentFlags().StringVar(&argsGoogleClientId, "google-client-id", "448379464054-clm37e3snnt3154cak4o5jqqmu4phs92.apps.googleusercontent.com", "")
+	serverCmd.PersistentFlags().StringVar(&argsGoogleRedirect, "google-redirect", "http://localhost:9091/api/v1/google/callback", "")
+	serverCmd.PersistentFlags().StringVar(&argsGoogleSecret, "google-secret", "ZVxzNkOk98T2vEGbF5L-EQX3", "")
+	serverCmd.PersistentFlags().StringVar(&argsGoogleScope, "google-scope", "profile https://www.googleapis.com/auth/contacts.readonly", "")
+	serverCmd.PersistentFlags().StringVar(&argsGoogleApiKey, "google-api-key", "AIzaSyA4GOtTmfHmAL5t8jn0LBZ_SsInQukugAU", "")
+
 	serverCmd.PersistentFlags().StringVar(&argsMicrosoftApplicationId, "microsoft-application-id", "86d75ba4-f7a0-4699-9c92-5c7a2bca194d", "")
 	serverCmd.PersistentFlags().StringVar(&argsMicrosoftRedirect, "microsoft-redirect", "http://localhost:9091/api/v1/microsoft/callback", "")
 	serverCmd.PersistentFlags().StringVar(&argsMicrosoftSecret, "microsoft-secret", "afMEQW2~?*jdyheSJU7715_", "")
 	//	serverCmd.PersistentFlags().StringVar(&argsMicrosoftScope, "microsoft-scope", "User.ReadBasic.All+Contacts.Read+Mail.Send+Files.ReadWrite+Notes.ReadWrite", "")
 	serverCmd.PersistentFlags().StringVar(&argsMicrosoftScope, "microsoft-scope", "User.ReadBasic.All", "")
+
 	serverCmd.PersistentFlags().StringVar(&argsSpitfireRest, "spitfire-rest", "http://localhost:8091", "")
 	serverCmd.PersistentFlags().StringVar(&argsSpitfireWs, "spitfire-ws", "ws://localhost:8091", "")
+
 	serverCmd.PersistentFlags().StringVar(&argsTwitterConsumerKey, "twitter-consumer-key", "l8kmFysxMIpsSdmCrHa3qWL7d", "")
 	serverCmd.PersistentFlags().StringVar(&argsTwitterConsumerSecret, "twitter-consumer-secret", "t4vRsq41orOzOnPMFYFMydqhgHMfe8NmstZndPUbySWsBTw0Mh", "")
 	serverCmd.PersistentFlags().StringVar(&argsTwitterRedirect, "twitter-redirect", "", "")
@@ -124,6 +138,11 @@ func init() {
 	viper.BindPFlag("kuberboard", serverCmd.PersistentFlags().Lookup("kuber-board"))
 	viper.BindPFlag("kuberrest", serverCmd.PersistentFlags().Lookup("kuber-rest"))
 	viper.BindPFlag("kuberws", serverCmd.PersistentFlags().Lookup("kuber-ws"))
+	viper.BindPFlag("googleclientid", serverCmd.PersistentFlags().Lookup("google-client-id"))
+	viper.BindPFlag("googleredirect", serverCmd.PersistentFlags().Lookup("google-redirect"))
+	viper.BindPFlag("googlesecret", serverCmd.PersistentFlags().Lookup("google-secret"))
+	viper.BindPFlag("googlescope", serverCmd.PersistentFlags().Lookup("google-scope"))
+	viper.BindPFlag("googleapikey", serverCmd.PersistentFlags().Lookup("google-api-key"))
 	viper.BindPFlag("microsoftapplicationid", serverCmd.PersistentFlags().Lookup("microsoft-application-id"))
 	viper.BindPFlag("microsoftredirect", serverCmd.PersistentFlags().Lookup("microsoft-redirect"))
 	viper.BindPFlag("microsoftsecret", serverCmd.PersistentFlags().Lookup("microsoft-secret"))

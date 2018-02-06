@@ -7,6 +7,11 @@ type Config struct {
 	KuberBoard             string `json:"kuberBoard"`
 	KuberRest              string `json:"kuberRest"`
 	KuberWs                string `json:"kuberWs"`
+	GoogleClientId         string `json:"googleClientId"`
+	GoogleRedirect         string `json:"googleRedirect"`
+	GoogleScope            string `json:"googleScope"`
+	GoogleSecret           string `json:"googleSecret"`
+	GoogleApiKey           string `json:"googleApiKey"`
 	MicrosoftApplicationId string `json:"microsoftApplicationId"`
 	MicrosoftRedirect      string `json:"microsoftRedirect"`
 	MicrosoftScope         string `json:"microsoftScope"`
