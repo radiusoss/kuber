@@ -8,31 +8,31 @@ It ships a REST and WebSocket server and a CLI (Command Line Interface).
 
 `git clone` this repository in your `go` path.
 
-```console
+```shell
 cd $GOPATH/src/github.com/datalayer
 git clone https://github.com/datalayer/kuber.git
 ```
 
 Start the `K8S Proxy`.
 
-```console
+```shell
 kubectl proxy
 ```
 
 You can now start the `Kuber Server`.
 
-```console
+```shell
 cd $GOPATH/src/github.com/datalayer/kuber
 go run main.go server --apiserver-host=http://localhost:8001
 ```
 
-We ship a (probably outdated) snapshot of the user interface (use the [Kuber Plane](https://github.com/datalayer/kuber-plane) repository for the latest version).
+We ship a snapshot of the user interface (use the [Datalayer UI](https://github.com/datalayer/ui) repository for the latest version).
 
 You can now browse [http://localhost:9091](http://localhost:9091) or make REST call to the API.
 
 ## Build Binary
 
-```console
+```shell
 cd $GOPATH/src/github.com/datalayer/kuber
 go build
 ```
@@ -43,7 +43,7 @@ This repository ships the `vendor` dependencies to ensure comptability.
 
 If you want to get your own dependencies, use the `dep` tool.
 
-```console
+```shell
 dep init
 dep ensure
 ```
@@ -61,12 +61,12 @@ kuber apply kuber -v 4
 
 Check the cluster is running.
 
-```console
+```shell
 watch kubectl get nodes; watch kubectl get pods --all-namespaces; kubectl proxy
 ```
 
 Delete the cluster.
 
-```console
+```shell
 kuber delete kuber -v 4 --purge
 ```

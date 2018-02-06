@@ -13,10 +13,10 @@ type CreateAzureCluster struct {
 }
 
 type CreateAzureNode struct {
+	KubernetesVersion string `json:"kubernetesVersion"`
 	ResourceGroup     string `json:"resourceGroup"`
 	AgentCount        int    `json:"agentCount"`
 	AgentName         string `json:"agentName"`
-	KubernetesVersion string `json:"kubernetesVersion"`
 }
 
 type UpdateAzureCluster struct {

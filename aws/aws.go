@@ -190,7 +190,7 @@ func ListS3(bucket string, region string) {
 func NewSession(region string) *session.Session {
 	sess, err := session.NewSession(&aws.Config{
 		Region:      aws.String(region),
-		Credentials: credentials.NewSharedCredentials("", "kuber-rest"),
+		Credentials: credentials.NewSharedCredentials("", "kuber"),
 	})
 	if err != nil {
 		fmt.Println("error", err)

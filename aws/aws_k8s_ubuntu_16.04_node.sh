@@ -14,7 +14,9 @@ echo $REGION
 aws ec2 create-tags --resources ${INSTANCEID} --region ${REGION} --tags Key=Cost,Value=kuber
 
 rm -fr /var/lib/docker
-mkdir /mnt/docker
+if [ ! -d "/mnt/docker" ]; then
+  mkdir /mnt/docker
+fi
 ln -s /mnt/docker /var/lib/docker
 
 # Specify the Kubernetes version to use

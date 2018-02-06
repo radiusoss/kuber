@@ -38,7 +38,8 @@ func NewUbuntuCluster(name string, zone string, image string) *cluster.Cluster {
 				MaxCount: 1,
 				MinCount: 1,
 				Image:    image,
-				Size:     "t2.xlarge",
+				//				Size:     "t2.xlarge",
+				Size: "c3.4xlarge",
 				BootstrapScripts: []string{
 					"https://raw.githubusercontent.com/datalayer/kuber/master/aws/aws_k8s_ubuntu_16.04_master.sh",
 				},
@@ -168,7 +169,7 @@ func NewUbuntuCluster(name string, zone string, image string) *cluster.Cluster {
 					},
 				},
 				AwsConfiguration: &cluster.AwsConfiguration{
-					SpotPrice: "0.6",
+				//					SpotPrice: "0.6",
 				},
 				Firewalls: []*cluster.Firewall{
 					{
