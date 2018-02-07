@@ -13,6 +13,14 @@ import (
 	"github.com/emicklei/go-restful"
 )
 
+type GoogleUser struct {
+	Username           string `json:"username"`
+	Oauth_token        string `json:"oauth_token"`
+	Oauth_verifier     string `json:"oauth_verifier"`
+	Oauth_access_token string `json:"oauth_access_token"`
+	IsAuth             bool   `json:"isAuth"`
+}
+
 type GoogleResource struct {
 	states map[int]int
 }
@@ -23,6 +31,7 @@ func (m GoogleResource) WebService() *restful.WebService {
 	ws.Path("/api/v1/google")
 	ws.Route(ws.GET("").To(m.Authorize))
 	ws.Route(ws.GET("/callback").To(m.Callback))
+	//	ws.Route(ws.POST("/me").To(m.GetMe))
 	return ws
 }
 
@@ -112,6 +121,15 @@ func (m GoogleResource) Callback(request *restful.Request, response *restful.Res
 
 }
 
+/*
+func (t GoogleResource) GetMe(request *restful.Request, response *restful.Response) {
+	gog := new(GoogleUser)
+	_ = request.ReadEntity(&gog)
+	fmt.Println("Requested Google User: ", gog)
+	fmt.Println("Me:", me)
+	response.WriteEntity(me)
+}
+*/
 func getRedirectUrl(request *restful.Request) string {
 	redirectUrl := config.KuberConfig.GoogleRedirect
 	if redirectUrl == "" {

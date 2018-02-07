@@ -55,6 +55,7 @@ func (t TwitterResource) WebService() *restful.WebService {
 }
 
 func (t TwitterResource) RedirecToTwitter(request *restful.Request, response *restful.Response) {
+
 	var conf = config.KuberConfig
 	fmt.Println(conf)
 
