@@ -55,6 +55,12 @@ EOF
 
 chmod 0600 /etc/systemd/system/kubelet.service.d/20-cloud-provider.conf
 
+if [ ! -d "/mnt/docker" ]; then
+  rm -fr /var/lib/docker
+  mkdir /mnt/docker
+  ln -s /mnt/docker /var/lib/docker
+fi
+
 apt-get update -y
 apt-get install -y \
     socat \
