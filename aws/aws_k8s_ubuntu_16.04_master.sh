@@ -75,7 +75,7 @@ PRIVATEIP=$(ec2metadata --local-ipv4 | cut -d " " -f 2)
 TOKEN=$(cat /etc/kubicorn/cluster.json | jq -r '.values.itemMap.INJECTEDTOKEN')
 PORT=$(cat /etc/kubicorn/cluster.json | jq -r '.values.itemMap.INJECTEDPORT | tonumber')
 
-# Necessary for joining a cluster with AWS information
+# Necessary for joining a cluster with AWS information.
 HOSTNAME=$(hostname -f)
 
 cat << EOF  > "/etc/kubicorn/kubeadm-config.yaml"
@@ -83,6 +83,7 @@ apiVersion: kubeadm.k8s.io/v1alpha1
 kind: MasterConfiguration
 cloudProvider: aws
 token: ${TOKEN}
+tokenTTL: 99999h0m0s
 kubernetesVersion: ${KUBERNETES_VERSION}
 nodeName: ${HOSTNAME}
 api:
