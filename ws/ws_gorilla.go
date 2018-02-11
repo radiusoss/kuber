@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/datalayer/kuber/cluster"
+	"github.com/datalayer/kuber/slots"
 	"github.com/gorilla/websocket"
 )
 
@@ -74,6 +75,9 @@ func Ws(w http.ResponseWriter, r *http.Request) {
 			if m.Op == "DELETE_CLUSTER" {
 				doCommand(m, con, w, r, deleteClusterCommand)
 			}
+			if m.Op == "PUT_SLOTS" {
+				doCommand(m, con, w, r, putSlots)
+			}
 		}
 
 	}
@@ -118,6 +122,10 @@ func createClusterCommand(m WsMessage) {
 
 func deleteClusterCommand(m WsMessage) {
 	cluster.DeleteCluster(cluster.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
+}
+
+func putSlots(m WsMessage) {
+	slots.PutSlots(m.Slots)
 }
 
 func pumpStdoutWs(m WsMessage, con *websocket.Conn, r io.Reader, done chan struct{}, hw http.ResponseWriter, hr *http.Request) {
