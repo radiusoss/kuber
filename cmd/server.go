@@ -117,7 +117,7 @@ func init() {
 
 	serverCmd.PersistentFlags().StringVar(&argsGoogleApiKey, "google-api-key", "AIzaSyA4GOtTmfHmAL5t8jn0LBZ_SsInQukugAU", "")
 	serverCmd.PersistentFlags().StringVar(&argsGoogleClientId, "google-client-id", "448379464054-clm37e3snnt3154cak4o5jqqmu4phs92.apps.googleusercontent.com", "")
-	serverCmd.PersistentFlags().StringVar(&argsGoogleRedirect, "google-redirect", "http://localhost:9091/api/v1/google/callback", "")
+	serverCmd.PersistentFlags().StringVar(&argsGoogleRedirect, "google-redirect", "http://localhost:9091/api/v1/google/redirect", "")
 	serverCmd.PersistentFlags().StringVar(&argsGoogleSecret, "google-secret", "ZVxzNkOk98T2vEGbF5L-EQX3", "")
 	serverCmd.PersistentFlags().StringVar(&argsGoogleScope, "google-scope", "profile email https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/user.emails.read", "")
 

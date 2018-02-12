@@ -30,7 +30,7 @@ func (m GoogleResource) WebService() *restful.WebService {
 	ws := new(restful.WebService)
 	ws.Path("/api/v1/google")
 	ws.Route(ws.GET("").To(m.Authorize))
-	ws.Route(ws.GET("/callback").To(m.Callback))
+	ws.Route(ws.GET("/redirect").To(m.Redirect))
 	//	ws.Route(ws.POST("/me").To(m.GetMe))
 	return ws
 }
@@ -40,7 +40,7 @@ func (m GoogleResource) Authorize(request *restful.Request, response *restful.Re
 	values := request.Request.URL.Query()
 	fmt.Printf("%v\n", values)
 	redirectUrl := getRedirectUrl(request)
-	fmt.Println("Callback URL=", redirectUrl)
+	fmt.Println("Redirect URL=", redirectUrl)
 	values.Add("redirect_uri", redirectUrl)
 	//	state := rand.New(time.Now().UnixNano()).Intn(int(MaxUint >> 1))
 	//	m.states[state] = state
@@ -50,9 +50,9 @@ func (m GoogleResource) Authorize(request *restful.Request, response *restful.Re
 	fmt.Println("Exit Google Redirect...")
 }
 
-func (m GoogleResource) Callback(request *restful.Request, response *restful.Response) {
+func (m GoogleResource) Redirect(request *restful.Request, response *restful.Response) {
 
-	fmt.Println("Enter Google Callback...")
+	fmt.Println("Enter Google Redirect...")
 
 	codes, ok := request.Request.URL.Query()["code"]
 
@@ -101,7 +101,9 @@ func (m GoogleResource) Callback(request *restful.Request, response *restful.Res
 		u := config.KuberConfig.KuberBoard
 
 		if u == "" {
-			scheme := "https"
+			// TODO(ECH) Check for SSL.
+			// scheme := "https"
+			scheme := "http"
 			host := request.Request.Host
 			if strings.HasPrefix(host, "localhost") {
 				scheme = "http"
@@ -133,12 +135,14 @@ func (t GoogleResource) GetMe(request *restful.Request, response *restful.Respon
 func getRedirectUrl(request *restful.Request) string {
 	redirectUrl := config.KuberConfig.GoogleRedirect
 	if redirectUrl == "" {
-		scheme := "https"
+		// TODO(ECH) Check for SSL.
+		// scheme := "https"
+		scheme := "http"
 		host := request.Request.Host
 		if strings.HasPrefix(host, "localhost") {
 			scheme = "http"
 		}
-		redirectUrl = scheme + "://" + host + "/api/v1/google/callback"
+		redirectUrl = scheme + "://" + host + "/api/v1/google/redirect"
 	}
 	return redirectUrl
 }
