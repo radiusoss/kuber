@@ -1,7 +1,7 @@
 package helm
 
 import (
-	"github.com/datalayer/kuber/cluster"
+	k "github.com/datalayer/kuber/k8s"
 
 	"github.com/emicklei/go-restful"
 	c "github.com/kris-nova/kubicorn/apis/cluster"
@@ -41,10 +41,10 @@ func (h HelmResource) GetDeployments(request *restful.Request, response *restful
 }
 
 func getCluster() *c.Cluster {
-	kc := cluster.KuberCluster{
+	kc := k.KuberCluster{
 		Name: clusterName,
 	}
-	cluster, err := cluster.GetCluster(kc)
+	cluster, err := k.GetCluster(kc)
 	if err != nil {
 		panic(err.Error())
 	}

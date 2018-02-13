@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/datalayer/kuber/cluster"
+	k "github.com/datalayer/kuber/k8s"
 	"github.com/datalayer/kuber/slots"
 	"github.com/gorilla/websocket"
 )
@@ -113,15 +113,15 @@ func doCommand(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.
 }
 
 func createClusterDefCommand(m WsMessage) {
-	cluster.CreateClusterDef(cluster.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
+	k.CreateClusterDef(k.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
 }
 
 func createClusterCommand(m WsMessage) {
-	cluster.CreateCluster(cluster.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
+	k.CreateCluster(k.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
 }
 
 func deleteClusterCommand(m WsMessage) {
-	cluster.DeleteCluster(cluster.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
+	k.DeleteCluster(k.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
 }
 
 func putSlots(m WsMessage) {

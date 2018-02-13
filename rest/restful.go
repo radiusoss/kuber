@@ -2,10 +2,10 @@ package rest
 
 import (
 	"github.com/datalayer/kuber/cloud"
-	"github.com/datalayer/kuber/cluster"
 	"github.com/datalayer/kuber/config"
 	"github.com/datalayer/kuber/google"
 	"github.com/datalayer/kuber/helm"
+	k "github.com/datalayer/kuber/k8s"
 	"github.com/datalayer/kuber/microsoft"
 	"github.com/datalayer/kuber/spl"
 	"github.com/datalayer/kuber/twitter"
@@ -41,9 +41,9 @@ func SetupGoRestful(wsContainer *restful.Container) {
 	clo := cloud.CloudResource{}
 	wsContainer.Add(clo.WebService())
 
-	// Cluster Resources.
-	cl := cluster.ClusterResource{}
-	wsContainer.Add(cl.WebService())
+	// K8s Resources.
+	k := k.ClusterResource{}
+	wsContainer.Add(k.WebService())
 
 	// Helm Resources.
 	h := helm.HelmResource{}

@@ -1,4 +1,4 @@
-package cluster
+package k8s
 
 import (
 	"github.com/emicklei/go-restful"
@@ -13,7 +13,7 @@ type ClusterResource struct {
 
 func (cl ClusterResource) WebService() *restful.WebService {
 	ws := new(restful.WebService)
-	ws.Path("/api/v1/cluster").
+	ws.Path("/api/v1/k8s").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
 	return ws
