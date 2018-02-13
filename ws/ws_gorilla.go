@@ -4,13 +4,13 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"sync"
 	"time"
 
 	k "github.com/datalayer/kuber/k8s"
+	"github.com/datalayer/kuber/log"
 	"github.com/datalayer/kuber/slots"
 	"github.com/gorilla/websocket"
 )
@@ -76,7 +76,10 @@ func Ws(w http.ResponseWriter, r *http.Request) {
 				doCommand(m, con, w, r, deleteClusterCommand)
 			}
 			if m.Op == "PUT_SLOTS" {
-				doCommand(m, con, w, r, putSlots)
+				doPutSlots(m, con, w, r)
+			}
+			if m.Op == "GET_SLOTS" {
+				doGetSlots(m, con, w, r)
 			}
 		}
 
@@ -86,6 +89,27 @@ func Ws(w http.ResponseWriter, r *http.Request) {
 
 func doEcho(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Request) {
 	writeJsonToConn(m, con, w, r)
+}
+
+func doPutSlots(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Request) {
+	log.Info("Slots: %v", m.Slots)
+	slots.PutSlots(m.Slots)
+	err := writeJsonToConn(m, con, w, r)
+	if err != nil {
+		log.Info("error", err)
+	}
+}
+
+func doGetSlots(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Request) {
+	slots := slots.GetSlots()
+	log.Info("Slots: %v", slots)
+	mm := WsMessage{}
+	mm.Op = m.Op
+	mm.Slots = slots
+	err := writeJsonToConn(mm, con, w, r)
+	if err != nil {
+		log.Info("error", err)
+	}
 }
 
 func doCommand(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Request, run runner) {
@@ -124,10 +148,6 @@ func deleteClusterCommand(m WsMessage) {
 	k.DeleteCluster(k.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
 }
 
-func putSlots(m WsMessage) {
-	slots.PutSlots(m.Slots)
-}
-
 func pumpStdoutWs(m WsMessage, con *websocket.Conn, r io.Reader, done chan struct{}, hw http.ResponseWriter, hr *http.Request) {
 
 	defer func() {}()
@@ -142,12 +162,12 @@ func pumpStdoutWs(m WsMessage, con *websocket.Conn, r io.Reader, done chan struc
 		mm.Message = string(b)
 		err := writeJsonToConn(mm, con, hw, hr)
 		if err != nil {
-			log.Println("error", err)
+			log.Info("error", err)
 			break
 		}
 	}
 	if s.Err() != nil {
-		log.Println("scan:", s.Err())
+		log.Info("scan:", s.Err())
 	}
 
 	close(done)
@@ -165,7 +185,7 @@ func pingWs(ws *websocket.Conn, done chan struct{}) {
 		select {
 		case <-ticker.C:
 			if err := ws.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(writeWait)); err != nil {
-				log.Println("ping:", err)
+				log.Info("Ping:", err)
 			}
 		case <-done:
 			return
