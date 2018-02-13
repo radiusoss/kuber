@@ -13,7 +13,7 @@ type ClusterResource struct {
 
 func (cl ClusterResource) WebService() *restful.WebService {
 	ws := new(restful.WebService)
-	ws.Path("/api/v1/kuber").
+	ws.Path("/api/v1/cluster").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
 	return ws

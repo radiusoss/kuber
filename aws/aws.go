@@ -8,9 +8,9 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go/service/elb"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
@@ -146,8 +146,7 @@ func GetVolumesForInstance(region string, instanceId string) *ec2.DescribeVolume
 }
 
 func InstancesByTag(tagName string, tagValue, region string) *ec2.DescribeInstancesOutput {
-	sess := NewSession(region)
-	svc := ec2.New(sess, &aws.Config{Region: aws.String(region)})
+	svc := ec2.New(NewSession(region))
 	fmt.Printf("listing instances with tag name %v and value %v in: %v\n", tagName, tagValue, region)
 	params := &ec2.DescribeInstancesInput{
 		Filters: []*ec2.Filter{
@@ -164,8 +163,98 @@ func InstancesByTag(tagName string, tagValue, region string) *ec2.DescribeInstan
 		fmt.Println("There was an error listing instances in", region, err.Error())
 		log.Fatal(err.Error())
 	}
-	fmt.Printf("%+v\n", *resp)
 	return resp
+}
+
+func GetLoadBalancersByTag(tagName string, tagValue, region string) []*string {
+	svc := elb.New(NewSession(region))
+	fmt.Printf("listing load balancers with tag name %v and value %v in: %v\n", tagName, tagValue, region)
+	input := &elb.DescribeLoadBalancersInput{
+	/*
+		LoadBalancerNames: []*string{
+			aws.String(name),
+		},
+	*/
+	}
+	resp, err := svc.DescribeLoadBalancers(input)
+	if err != nil {
+		fmt.Println("DescribeLoadBalancers error in", region, err.Error())
+		log.Fatal(err.Error())
+	}
+	var names []*string
+	for _, elb := range resp.LoadBalancerDescriptions {
+		names = append(names, elb.LoadBalancerName)
+	}
+	input2 := &elb.DescribeTagsInput{
+		LoadBalancerNames: names,
+	}
+	tags, err := svc.DescribeTags(input2)
+	if err != nil {
+		fmt.Println("There was an error listing instances in", region, err.Error())
+		log.Fatal(err.Error())
+	}
+	var elbs []*string
+	for _, desc := range tags.TagDescriptions {
+		for _, tag := range desc.Tags {
+			if *tag.Key == tagName {
+				if *tag.Value == tagValue {
+					elbs = append(elbs, desc.LoadBalancerName)
+				}
+			}
+		}
+	}
+	return elbs
+}
+
+func RegisterInstanceToLoadBalancer(instanceId *string, loadBalancerName *string, region string) *elb.RegisterInstancesWithLoadBalancerOutput {
+	svc := elb.New(NewSession(region))
+	fmt.Printf("Register instance to load balancers %v and value %v in: %v\n", instanceId, loadBalancerName, region)
+	input := &elb.RegisterInstancesWithLoadBalancerInput{
+		Instances: []*elb.Instance{
+			{
+				InstanceId: instanceId,
+			},
+		},
+		LoadBalancerName: loadBalancerName,
+	}
+	result, err := svc.RegisterInstancesWithLoadBalancer(input)
+	if err != nil {
+		fmt.Println("RegisterInstanceToLoadBalancer error in", region, err.Error())
+		log.Fatal(err.Error())
+	}
+
+	return result
+}
+
+func TagResource(resourceId string, tagName string, tagValue, region string) {
+	sess := NewSession(region)
+	svc := ec2.New(sess, &aws.Config{Region: aws.String(region)})
+	input := &ec2.CreateTagsInput{
+		Resources: []*string{
+			aws.String(resourceId),
+		},
+		Tags: []*ec2.Tag{
+			{
+				Key:   aws.String(tagName),
+				Value: aws.String(tagValue),
+			},
+		},
+	}
+
+	_, err := svc.CreateTags(input)
+	if err != nil {
+		if aerr, ok := err.(awserr.Error); ok {
+			switch aerr.Code() {
+			default:
+				fmt.Println(aerr.Error())
+			}
+		} else {
+			// Print the error, cast err to awserr.Error to get the Code and
+			// Message from an error.
+			fmt.Println(err.Error())
+		}
+		return
+	}
 }
 
 func ListS3(bucket string, region string) {
@@ -189,8 +278,8 @@ func ListS3(bucket string, region string) {
 
 func NewSession(region string) *session.Session {
 	sess, err := session.NewSession(&aws.Config{
-		Region:      aws.String(region),
-		Credentials: credentials.NewSharedCredentials("", "kuber"),
+		Region: aws.String(region),
+		//		Credentials: credentials.NewSharedCredentials("", "kuber"),
 	})
 	if err != nil {
 		fmt.Println("error", err)

@@ -31,8 +31,31 @@ func TestInstancesByRegions(t *testing.T) {
 }
 
 func TestInstancesByTag(t *testing.T) {
-	resp := InstancesByTag("KubernetesCluster", "kuber", region)
+	//	resp := InstancesByTag("KubernetesCluster", "kuber", region)
+	resp := InstancesByTag("Name", "kuber.master", region)
 	t.Logf("%+v\n", *resp)
+}
+
+func TestTagResource(t *testing.T) {
+	resp := InstancesByTag("Name", "kuber.master2", region)
+	for _, instance := range resp.Reservations[0].Instances {
+		id := *instance.InstanceId
+		fmt.Println(id)
+		TagResource(id, "foo", "bar", region)
+	}
+}
+
+func TestGetLoadBalancersByTag(t *testing.T) {
+	resp := GetLoadBalancersByTag("kuber-role", "spitfire", region)
+	fmt.Println(resp)
+}
+func TestRegisterInstanceToLoadBalancer(t *testing.T) {
+	inst := InstancesByTag("Name", "kuber.master", region).Reservations[0].Instances[0].InstanceId
+	fmt.Println(*inst)
+	lb := GetLoadBalancersByTag("kuber-role", "explorer", region)[0]
+	fmt.Println(*lb)
+	result := RegisterInstanceToLoadBalancer(inst, lb, region)
+	fmt.Println(result)
 }
 
 func TestListS3(t *testing.T) {
