@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/autoscaling"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/elb"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -224,6 +225,43 @@ func RegisterInstanceToLoadBalancer(instanceId *string, loadBalancerName *string
 	}
 
 	return result
+}
+
+func ScaleWorkers(desiredWorkers int64, region string) *autoscaling.Group {
+	svc := autoscaling.New(NewSession(region))
+
+	asgn := "kuber.node"
+
+	input := &autoscaling.DescribeAutoScalingGroupsInput{
+		AutoScalingGroupNames: []*string{
+			aws.String(asgn),
+		},
+	}
+
+	result, err := svc.DescribeAutoScalingGroups(input)
+	if err != nil {
+		fmt.Println("ScaleWorkers error in", region, err.Error())
+		log.Fatal(err.Error())
+	}
+
+	g := result.AutoScalingGroups[0]
+
+	if &desiredWorkers != g.DesiredCapacity {
+		input2 := &autoscaling.UpdateAutoScalingGroupInput{
+			AutoScalingGroupName: aws.String(asgn),
+			DesiredCapacity:      &desiredWorkers,
+		}
+
+		_, err := svc.UpdateAutoScalingGroup(input2)
+		if err != nil {
+			fmt.Println("ScaleWorkers error in", region, err.Error())
+			log.Fatal(err.Error())
+		}
+
+	}
+
+	return g
+
 }
 
 func TagResource(resourceId string, tagName string, tagValue, region string) {

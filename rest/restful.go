@@ -41,7 +41,7 @@ func SetupGoRestful(wsContainer *restful.Container) {
 	clo := cloud.CloudResource{}
 	wsContainer.Add(clo.WebService())
 
-	// K8s Resources.
+	// K8S Resources.
 	k := k.ClusterResource{}
 	wsContainer.Add(k.WebService())
 

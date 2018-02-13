@@ -58,6 +58,11 @@ func TestRegisterInstanceToLoadBalancer(t *testing.T) {
 	fmt.Println(result)
 }
 
+func TestScaleWorkers(t *testing.T) {
+	result := ScaleWorkers(3, region)
+	fmt.Println(result)
+}
+
 func TestListS3(t *testing.T) {
 	ListS3("transics-datalake", region)
 }
