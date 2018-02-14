@@ -9,6 +9,7 @@ import (
 
 	"github.com/datalayer/kuber/aws"
 	"github.com/datalayer/kuber/cmd"
+	"github.com/datalayer/kuber/slots"
 	"github.com/datalayer/kuber/util"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -50,14 +51,30 @@ func sanitize() {
 	}
 
 	for true {
-		adjustNodeCapacity(3, region)
+		adjustNodeCapacity(region)
 		tagK8SWorkers(config, region)
 		registerMasterToLoadBalancers(region)
-		time.Sleep(time.Second * time.Duration(60))
+		time.Sleep(time.Second * time.Duration(15))
 	}
 }
 
-func adjustNodeCapacity(desiredWorkers int64, region string) {
+func adjustNodeCapacity(region string) {
+	slt := slots.Slots
+	clusterUp := false
+	for _, s := range slt {
+		now := time.Now()
+		start, _ := time.Parse(time.RFC3339, s.Start)
+		end, _ := time.Parse(time.RFC3339, s.End)
+		fmt.Println("Slot %v %v", start, end)
+		if now.After(start) && now.Before(end) {
+			clusterUp = true
+		}
+	}
+	var desiredWorkers int64 = 0
+	if clusterUp {
+		desiredWorkers = 3
+	}
+	fmt.Println("+++ Desired Workers: %v", desiredWorkers)
 	aws.ScaleWorkers(desiredWorkers, region)
 }
 

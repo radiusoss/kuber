@@ -8,20 +8,20 @@ import (
 )
 
 type Slot struct {
-	Id    int    `json:"id"`
-	Start string `json:"start"`
-	End   string `json:"end"`
-	Title string `json:"title"`
-	Desc  string `json:"desc"`
+	Id     int    `json:"id"`
+	Start  string `json:"start"`
+	End    string `json:"end"`
+	Title  string `json:"title"`
+	Desc   string `json:"desc"`
+	AllDay bool   `json:"allDay"`
 }
 
 var Slots []Slot
 
 func init() {
-
 	var s = []byte(`[
-		{"Id":1, "Start": "Mon Feb 12 2018 12:00:00 GMT+0100 (CET)", "End": "Mon Feb 12 2018 13:00:00 GMT+0100 (CET)", "Title": "Title 1", "Desc": "Desc 1"}
-	]`)
+			{"Id":1, "Start": "2013-02-04T22:44:30.652Z", "End": "2013-02-05T22:44:30.652Z", "Title": "Title 1", "Desc": "Desc 1"}
+		]`)
 	err := json.Unmarshal(s, &Slots)
 	if err != nil {
 		fmt.Println("error:", err)
