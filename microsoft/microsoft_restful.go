@@ -20,7 +20,7 @@ type MicrosoftResource struct {
 func (m MicrosoftResource) WebService() *restful.WebService {
 	m.states = make(map[int]int)
 	ws := new(restful.WebService)
-	ws.Path("/api/v1/microsoft")
+	ws.Path("/kuber/api/v1/microsoft")
 	ws.Route(ws.GET("").To(m.Authorize))
 	ws.Route(ws.GET("/callback").To(m.Callback))
 	return ws
@@ -153,7 +153,7 @@ func getRedirectUrl(request *restful.Request) string {
 		if strings.HasPrefix(host, "localhost") {
 			scheme = "http"
 		}
-		redirectUrl = scheme + "://" + host + "/api/v1/microsoft/callback"
+		redirectUrl = scheme + "://" + host + "/kuber/api/v1/microsoft/callback"
 	}
 	return redirectUrl
 }

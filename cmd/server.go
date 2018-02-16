@@ -117,12 +117,12 @@ func init() {
 
 	serverCmd.PersistentFlags().StringVar(&argsGoogleApiKey, "google-api-key", "AIzaSyA4GOtTmfHmAL5t8jn0LBZ_SsInQukugAU", "")
 	serverCmd.PersistentFlags().StringVar(&argsGoogleClientId, "google-client-id", "448379464054-clm37e3snnt3154cak4o5jqqmu4phs92.apps.googleusercontent.com", "")
-	serverCmd.PersistentFlags().StringVar(&argsGoogleRedirect, "google-redirect", "http://localhost:9091/api/v1/google/redirect", "")
+	serverCmd.PersistentFlags().StringVar(&argsGoogleRedirect, "google-redirect", "http://localhost:9091/kuber/api/v1/google/redirect", "")
 	serverCmd.PersistentFlags().StringVar(&argsGoogleSecret, "google-secret", "ZVxzNkOk98T2vEGbF5L-EQX3", "")
 	serverCmd.PersistentFlags().StringVar(&argsGoogleScope, "google-scope", "profile email https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/user.emails.read", "")
 
 	serverCmd.PersistentFlags().StringVar(&argsMicrosoftApplicationId, "microsoft-application-id", "86d75ba4-f7a0-4699-9c92-5c7a2bca194d", "")
-	serverCmd.PersistentFlags().StringVar(&argsMicrosoftRedirect, "microsoft-redirect", "http://localhost:9091/api/v1/microsoft/callback", "")
+	serverCmd.PersistentFlags().StringVar(&argsMicrosoftRedirect, "microsoft-redirect", "http://localhost:9091/kuber/api/v1/microsoft/callback", "")
 	serverCmd.PersistentFlags().StringVar(&argsMicrosoftSecret, "microsoft-secret", "afMEQW2~?*jdyheSJU7715_", "")
 	//	serverCmd.PersistentFlags().StringVar(&argsMicrosoftScope, "microsoft-scope", "User.ReadBasic.All+Contacts.Read+Mail.Send+Files.ReadWrite+Notes.ReadWrite", "")
 	serverCmd.PersistentFlags().StringVar(&argsMicrosoftScope, "microsoft-scope", "User.ReadBasic.All", "")
@@ -249,10 +249,10 @@ func serveWithK8s() {
 
 	http.Handle("/", handler.MakeGzipHandler(http.FileServer(http.Dir("./_ui/"))))
 
-	http.Handle("/api/", apiHandler)
+	http.Handle("/kuber/api/", apiHandler)
 	// TODO(maciaszczykm): Move to /appConfig.json as it was discussed in #640.
-	http.Handle("/api/appConfig.json", handler.AppHandler(handler.ConfigHandler))
-	http.Handle("/api/sockjs/", handler.CreateAttachHandler("/api/sockjs"))
+	http.Handle("/kuber/api/appConfig.json", handler.AppHandler(handler.ConfigHandler))
+	http.Handle("/kuber/api/sockjs/", handler.CreateAttachHandler("/kuber/api/sockjs"))
 	http.Handle("/metrics", prometheus.Handler())
 
 	// Listen for http or https

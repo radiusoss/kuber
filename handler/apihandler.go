@@ -107,7 +107,7 @@ func CreateHTTPAPIHandler(iManager integration.IntegrationManager, cManager clie
 
 	InstallFilters(apiV1Ws, cManager)
 
-	apiV1Ws.Path("/api/v1").
+	apiV1Ws.Path("/kuber/api/v1").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
 	wsContainer.Add(apiV1Ws)

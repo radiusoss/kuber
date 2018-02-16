@@ -19,7 +19,7 @@ type UserResource struct {
 
 func (u UserResource) WebService() *restful.WebService {
 	ws := new(restful.WebService)
-	ws.Path("/api/v1/user").
+	ws.Path("/kuber/api/v1/user").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
 	ws.Route(ws.GET("/").To(u.FindAllUsers))

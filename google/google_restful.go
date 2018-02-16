@@ -28,7 +28,7 @@ type GoogleResource struct {
 func (m GoogleResource) WebService() *restful.WebService {
 	m.states = make(map[int]int)
 	ws := new(restful.WebService)
-	ws.Path("/api/v1/google")
+	ws.Path("/kuber/api/v1/google")
 	ws.Route(ws.GET("").To(m.Authorize))
 	ws.Route(ws.GET("/redirect").To(m.Redirect))
 	//	ws.Route(ws.POST("/me").To(m.GetMe))
@@ -142,7 +142,7 @@ func getRedirectUrl(request *restful.Request) string {
 		if strings.HasPrefix(host, "localhost") {
 			scheme = "http"
 		}
-		redirectUrl = scheme + "://" + host + "/api/v1/google/redirect"
+		redirectUrl = scheme + "://" + host + "/kuber/api/v1/google/redirect"
 	}
 	return redirectUrl
 }

@@ -16,7 +16,7 @@ type SplResource struct {
 
 func (u SplResource) WebService() *restful.WebService {
 	ws := new(restful.WebService)
-	ws.Path("/api/v1/spl").
+	ws.Path("/kuber/api/v1/spl").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
 	ws.Route(ws.GET("/all").To(u.GetAllSpl))

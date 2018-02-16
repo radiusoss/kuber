@@ -10,7 +10,7 @@ type ConfigResource struct {
 
 func (c ConfigResource) WebService() *restful.WebService {
 	ws := new(restful.WebService)
-	ws.Path("/api/v1/config").
+	ws.Path("/kuber/api/v1/config").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
 	ws.Route(ws.GET("/").To(c.GetConf))

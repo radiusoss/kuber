@@ -50,7 +50,7 @@ func sanitize() {
 
 	}
 
-	for true {
+	for os.Getenv("KUBER_AUTOSCALING") == "true" {
 		adjustNodeCapacity(region)
 		tagK8SWorkers(config, region)
 		registerMasterToLoadBalancers(region)

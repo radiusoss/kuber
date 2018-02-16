@@ -132,14 +132,14 @@ func shouldDoCsrfValidation(req *restful.Request) bool {
 
 	// Validation handlers are idempotent functions, and not actual data
 	// modification operations
-	if strings.HasPrefix(req.SelectedRoutePath(), "/api/v1/appdeployment/validate/") {
+	if strings.HasPrefix(req.SelectedRoutePath(), "/kuber/api/v1/appdeployment/validate/") {
 		return false
 	}
 
 	return true
 }
 
-// mapUrlToResource extracts the resource from the URL path /api/v1/<resource>.
+// mapUrlToResource extracts the resource from the URL path /kuber/api/v1/<resource>.
 // Ignores potential subresources.
 func mapUrlToResource(url string) *string {
 	parts := strings.Split(url, "/")

@@ -40,7 +40,7 @@ func (t TwitterResource) WebService() *restful.WebService {
 		HttpOnly: false,
 	}
 	ws := new(restful.WebService)
-	ws.Path("/api/v1/twitter").
+	ws.Path("/kuber/api/v1/twitter").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
 	ws.Route(ws.GET("/").To(t.RedirecToTwitter))
@@ -68,7 +68,7 @@ func (t TwitterResource) RedirecToTwitter(request *restful.Request, response *re
 		if strings.HasPrefix(host, "localhost") {
 			scheme = "http"
 		}
-		redirecttUrl = scheme + "://" + host + "/api/v1/twitter/callback"
+		redirecttUrl = scheme + "://" + host + "/kuber/api/v1/twitter/callback"
 	}
 	fmt.Println("Callback URL=", redirecttUrl)
 

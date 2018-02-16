@@ -4,7 +4,7 @@ var KuberConfig Config
 
 type Config struct {
 	Hdfs                   string `json:"hdfs"`
-	KuberBoard             string `json:"kuberBoard"`
+	KuberBoard             string `json:"kuberUi"`
 	KuberRest              string `json:"kuberRest"`
 	KuberWs                string `json:"kuberWs"`
 	GoogleClientId         string `json:"googleClientId"`

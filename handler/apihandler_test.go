@@ -86,11 +86,11 @@ func TestMapUrlToResource(t *testing.T) {
 		url, expected string
 	}{
 		{
-			"/api/v1/pod",
+			"/kuber/api/v1/pod",
 			"pod",
 		},
 		{
-			"/api/v1/node",
+			"/kuber/api/v1/node",
 			"node",
 		},
 	}
@@ -103,7 +103,7 @@ func TestMapUrlToResource(t *testing.T) {
 }
 
 func TestFormatRequestLog(t *testing.T) {
-	req, err := http.NewRequest("PUT", "/api/v1/pod", bytes.NewReader([]byte("{}")))
+	req, err := http.NewRequest("PUT", "/kuber/api/v1/pod", bytes.NewReader([]byte("{}")))
 	if err != nil {
 		t.Error("Cannot mockup request")
 	}
@@ -115,7 +115,7 @@ func TestFormatRequestLog(t *testing.T) {
 			&restful.Request{
 				Request: req,
 			},
-			"Incoming HTTP/1.1 PUT /api/v1/pod request",
+			"Incoming HTTP/1.1 PUT /kuber/api/v1/pod request",
 		},
 	}
 	for _, c := range cases {
