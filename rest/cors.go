@@ -25,7 +25,7 @@ func AllowedHeaders() []string {
 func AllowedOrigins() []string {
 	return []string{
 		"http://localhost:4326",
-		config.KuberConfig.KuberBoard,
+		config.KuberConfig.KuberUi,
 	}
 }
 func AllowedMethods() []string {

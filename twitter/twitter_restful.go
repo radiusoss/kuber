@@ -124,7 +124,7 @@ func (t TwitterResource) GetTwitterToken(request *restful.Request, response *res
 
 	Save(tokenKey, verificationCode)
 
-	redirectURL := fmt.Sprintf(config.KuberConfig.KuberBoard+"/#/auth/twitter/callback?token=%s&code=%s&access=%s", tokenKey, verificationCode, accessToken.Token)
+	redirectURL := fmt.Sprintf(config.KuberConfig.KuberUi+"/#/auth/twitter/callback?token=%s&code=%s&access=%s", tokenKey, verificationCode, accessToken.Token)
 	http.Redirect(response.ResponseWriter, request.Request, redirectURL, http.StatusTemporaryRedirect)
 
 	fmt.Println("Leaving Twitter Callback...")

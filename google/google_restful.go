@@ -98,7 +98,7 @@ func (m GoogleResource) Redirect(request *restful.Request, response *restful.Res
 		}
 		fmt.Println(data)
 
-		u := config.KuberConfig.KuberBoard
+		u := config.KuberConfig.KuberUi
 
 		if u == "" {
 			// TODO(ECH) Check for SSL.

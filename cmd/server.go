@@ -52,7 +52,7 @@ var (
 	argEnableInsecureLogin      bool
 	argSystemBanner             string
 	argSystemBannerSeverity     string
-	argsKuberBoard              string
+	argsKuberUi                 string
 	argsKuberRest               string
 	argsKuberWs                 string
 	argsGoogleClientId          string
@@ -111,7 +111,7 @@ func init() {
 	serverCmd.PersistentFlags().StringVar(&argSystemBannerSeverity, "system-banner-severity", "INFO", "Severity of system banner. Should be one of 'INFO|WARNING|ERROR'. Default: 'INFO'.")
 
 	serverCmd.PersistentFlags().StringVar(&argsHdfs, "hdfs", "http://localhost:50070", "")
-	serverCmd.PersistentFlags().StringVar(&argsKuberBoard, "kuber-ui", "http://localhost:4326", "")
+	serverCmd.PersistentFlags().StringVar(&argsKuberUi, "kuber-ui", "http://localhost:4326", "")
 	serverCmd.PersistentFlags().StringVar(&argsKuberRest, "kuber-rest", "http://localhost:9091", "")
 	serverCmd.PersistentFlags().StringVar(&argsKuberWs, "kuber-ws", "ws://localhost:9091", "")
 

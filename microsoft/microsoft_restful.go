@@ -122,7 +122,7 @@ func (m MicrosoftResource) Callback(request *restful.Request, response *restful.
 		}
 		fmt.Println(data)
 
-		u := config.KuberConfig.KuberBoard
+		u := config.KuberConfig.KuberUi
 
 		if u == "" {
 			scheme := "https"
