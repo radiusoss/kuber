@@ -103,7 +103,7 @@ func (m GoogleResource) Redirect(request *restful.Request, response *restful.Res
 		if u == "" {
 			// TODO(ECH) Check for SSL.
 			// scheme := "https"
-			scheme := "https"
+			scheme := "http"
 			host := request.Request.Host
 			if strings.HasPrefix(host, "localhost") {
 				scheme = "http"
@@ -137,7 +137,7 @@ func getRedirectUrl(request *restful.Request) string {
 	if redirectUrl == "" {
 		// TODO(ECH) Check for SSL.
 		// scheme := "https"
-		scheme := "https"
+		scheme := "http"
 		host := request.Request.Host
 		if strings.HasPrefix(host, "localhost") {
 			scheme = "http"

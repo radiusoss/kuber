@@ -1,6 +1,9 @@
 .*
 kuber
 bin
+*.tgz
+*.tar.gz
+*.zip
 _state
 _vendor*
 __tmp

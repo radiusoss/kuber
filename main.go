@@ -113,12 +113,18 @@ func tagAwsWorkers(region string) {
 func registerMasterToLoadBalancers(region string) {
 	inst := aws.InstancesByTag("Name", "kuber.master", region).Reservations[0].Instances[0].InstanceId
 	fmt.Println("Master Instance: " + *inst)
-	spitfireLb := aws.GetLoadBalancersByTag("kuber-role", "spitfire", region)[0]
-	fmt.Println("Spitfire Load Balancer: " + *spitfireLb)
-	spitfireResult := aws.RegisterInstanceToLoadBalancer(inst, spitfireLb, region)
-	fmt.Println(spitfireResult)
-	explorerLb := aws.GetLoadBalancersByTag("kuber-role", "explorer", region)[0]
-	fmt.Println("Explorer Load Balancer: " + *explorerLb)
-	explorerResult := aws.RegisterInstanceToLoadBalancer(inst, explorerLb, region)
-	fmt.Println(explorerResult)
+	spitfireLbs := aws.GetLoadBalancersByTag("kuber-role", "spitfire", region)
+	if len(spitfireLbs) > 0 {
+		spitfireLb := spitfireLbs[0]
+		fmt.Println("Spitfire Load Balancer: " + *spitfireLb)
+		spitfireResult := aws.RegisterInstanceToLoadBalancer(inst, spitfireLb, region)
+		fmt.Println(spitfireResult)
+	}
+	explorerLbs := aws.GetLoadBalancersByTag("kuber-role", "explorer", region)
+	if len(explorerLbs) > 0 {
+		explorerLb := explorerLbs[0]
+		fmt.Println("Explorer Load Balancer: " + *explorerLb)
+		explorerResult := aws.RegisterInstanceToLoadBalancer(inst, explorerLb, region)
+		fmt.Println(explorerResult)
+	}
 }

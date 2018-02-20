@@ -125,7 +125,7 @@ func (m MicrosoftResource) Callback(request *restful.Request, response *restful.
 		u := config.KuberConfig.KuberUi
 
 		if u == "" {
-			scheme := "https"
+			scheme := "http"
 			host := request.Request.Host
 			if strings.HasPrefix(host, "localhost") {
 				scheme = "http"
@@ -148,7 +148,7 @@ func (m MicrosoftResource) Callback(request *restful.Request, response *restful.
 func getRedirectUrl(request *restful.Request) string {
 	redirectUrl := config.KuberConfig.MicrosoftRedirect
 	if redirectUrl == "" {
-		scheme := "https"
+		scheme := "http"
 		host := request.Request.Host
 		if strings.HasPrefix(host, "localhost") {
 			scheme = "http"

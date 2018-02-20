@@ -119,7 +119,7 @@ func init() {
 	serverCmd.PersistentFlags().StringVar(&argsGoogleClientId, "google-client-id", "448379464054-clm37e3snnt3154cak4o5jqqmu4phs92.apps.googleusercontent.com", "")
 	serverCmd.PersistentFlags().StringVar(&argsGoogleRedirect, "google-redirect", "http://localhost:9091/kuber/api/v1/google/redirect", "")
 	serverCmd.PersistentFlags().StringVar(&argsGoogleSecret, "google-secret", "ZVxzNkOk98T2vEGbF5L-EQX3", "")
-	serverCmd.PersistentFlags().StringVar(&argsGoogleScope, "google-scope", "profile email https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/user.emails.read", "")
+	serverCmd.PersistentFlags().StringVar(&argsGoogleScope, "google-scope", "profile email https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/user.emails.read https://www.googleapis.com/auth/gmail.insert", "")
 
 	serverCmd.PersistentFlags().StringVar(&argsMicrosoftApplicationId, "microsoft-application-id", "86d75ba4-f7a0-4699-9c92-5c7a2bca194d", "")
 	serverCmd.PersistentFlags().StringVar(&argsMicrosoftRedirect, "microsoft-redirect", "http://localhost:9091/kuber/api/v1/microsoft/callback", "")
