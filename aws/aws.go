@@ -173,7 +173,7 @@ func KuberInstances(region string) *ec2.DescribeInstancesOutput {
 	params := &ec2.DescribeInstancesInput{
 		Filters: []*ec2.Filter{
 			{
-				Name: aws.String("tag:" + "kuber-role"),
+				Name: aws.String("tag:" + "KubernetesCluster"),
 				Values: []*string{
 					aws.String(strings.Join([]string{"*"}, "")),
 				},
