@@ -18,10 +18,16 @@ func (cl CloudResource) WebService() *restful.WebService {
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
 	ws.Route(ws.GET("/aws/{region}/volumes").To(cl.GetAwsVolumes))
+	ws.Route(ws.GET("/aws/{region}/vms").To(cl.GetVMs))
 	return ws
 }
 
 func (cl CloudResource) GetAwsVolumes(request *restful.Request, response *restful.Response) {
 	volumes := aws.GetVolumes(request.PathParameter("region"))
 	response.WriteEntity(volumes)
+}
+
+func (cl CloudResource) GetVMs(request *restful.Request, response *restful.Response) {
+	instance := aws.KuberInstances(request.PathParameter("region"))
+	response.WriteEntity(instance)
 }

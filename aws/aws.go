@@ -167,6 +167,27 @@ func InstancesByTag(tagName string, tagValue, region string) *ec2.DescribeInstan
 	return resp
 }
 
+func KuberInstances(region string) *ec2.DescribeInstancesOutput {
+	svc := ec2.New(NewSession(region))
+	fmt.Printf("Listing Kuber instances in: %v\n", region)
+	params := &ec2.DescribeInstancesInput{
+		Filters: []*ec2.Filter{
+			{
+				Name: aws.String("tag:" + "kuber-role"),
+				Values: []*string{
+					aws.String(strings.Join([]string{"*"}, "")),
+				},
+			},
+		},
+	}
+	resp, err := svc.DescribeInstances(params)
+	if err != nil {
+		fmt.Println("There was an error listing instances in", region, err.Error())
+		log.Fatal(err.Error())
+	}
+	return resp
+}
+
 func GetLoadBalancersByTag(tagName string, tagValue, region string) []*string {
 	svc := elb.New(NewSession(region))
 	fmt.Printf("listing load balancers with tag name %v and value %v in: %v\n", tagName, tagValue, region)
