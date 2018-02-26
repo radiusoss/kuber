@@ -1,5 +1,7 @@
 package config
 
+const DefaultRegion = "eu-central-1"
+
 var KuberConfig Config
 
 type Config struct {

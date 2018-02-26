@@ -2,9 +2,12 @@ package aws
 
 import (
 	"fmt"
+	"time"
 
 	"log"
 	"strings"
+
+	"github.com/datalayer/kuber/slots"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -146,6 +149,56 @@ func GetVolumesForInstance(region string, instanceId string) *ec2.DescribeVolume
 	return result
 }
 
+func TagAwsWorkers(region string) {
+	resp := InstancesByTag("Name", "kuber.node", region)
+	if resp.Reservations != nil {
+		for _, instance := range resp.Reservations[0].Instances {
+			id := *instance.InstanceId
+			fmt.Println("Tagging with kuber-role=node resource: " + id)
+			TagResource(id, "kuber-role", "node", region)
+		}
+	}
+}
+
+func RegisterMasterToLoadBalancers(region string) {
+	inst := InstancesByTag("Name", "kuber.master", region).Reservations[0].Instances[0].InstanceId
+	fmt.Println("Master Instance: " + *inst)
+	spitfireLbs := GetLoadBalancersByTag("kuber-role", "spitfire", region)
+	if len(spitfireLbs) > 0 {
+		spitfireLb := spitfireLbs[0]
+		fmt.Println("Spitfire Load Balancer: " + *spitfireLb)
+		spitfireResult := RegisterInstanceToLoadBalancer(inst, spitfireLb, region)
+		fmt.Println(spitfireResult)
+	}
+	explorerLbs := GetLoadBalancersByTag("kuber-role", "explorer", region)
+	if len(explorerLbs) > 0 {
+		explorerLb := explorerLbs[0]
+		fmt.Println("Explorer Load Balancer: " + *explorerLb)
+		explorerResult := RegisterInstanceToLoadBalancer(inst, explorerLb, region)
+		fmt.Println(explorerResult)
+	}
+}
+
+func AdjustNodeCapacity(region string) {
+	slt := slots.Slots
+	clusterUp := false
+	for _, s := range slt {
+		now := time.Now()
+		start, _ := time.Parse(time.RFC3339, s.Start)
+		end, _ := time.Parse(time.RFC3339, s.End)
+		fmt.Println("Slot %v %v", start, end)
+		if now.After(start) && now.Before(end) {
+			clusterUp = true
+		}
+	}
+	var desiredWorkers int64 = 0
+	if clusterUp {
+		desiredWorkers = 3
+	}
+	fmt.Println("+++ Desired Workers: %v", desiredWorkers)
+	ScaleWorkers(desiredWorkers, region)
+}
+
 func InstancesByTag(tagName string, tagValue, region string) *ec2.DescribeInstancesOutput {
 	svc := ec2.New(NewSession(region))
 	fmt.Printf("listing instances with tag name %v and value %v in: %v\n", tagName, tagValue, region)
@@ -169,13 +222,19 @@ func InstancesByTag(tagName string, tagValue, region string) *ec2.DescribeInstan
 
 func KuberInstances(region string) *ec2.DescribeInstancesOutput {
 	svc := ec2.New(NewSession(region))
-	fmt.Printf("Listing Kuber instances in: %v\n", region)
+	fmt.Printf("Listing running Kuber instances in: %v\n", region)
 	params := &ec2.DescribeInstancesInput{
 		Filters: []*ec2.Filter{
 			{
 				Name: aws.String("tag:" + "KubernetesCluster"),
 				Values: []*string{
 					aws.String(strings.Join([]string{"*"}, "")),
+				},
+			},
+			{
+				Name: aws.String("instance-state-name"),
+				Values: []*string{
+					aws.String(strings.Join([]string{"running"}, "")),
 				},
 			},
 		},
@@ -271,6 +330,7 @@ func ScaleWorkers(desiredWorkers int64, region string) *autoscaling.Group {
 		input2 := &autoscaling.UpdateAutoScalingGroupInput{
 			AutoScalingGroupName: aws.String(asgn),
 			DesiredCapacity:      &desiredWorkers,
+			MaxSize:              &desiredWorkers,
 		}
 
 		_, err := svc.UpdateAutoScalingGroup(input2)

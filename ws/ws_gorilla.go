@@ -9,7 +9,9 @@ import (
 	"sync"
 	"time"
 
-	k "github.com/datalayer/kuber/k8s"
+	"github.com/datalayer/kuber/aws"
+	"github.com/datalayer/kuber/config"
+	"github.com/datalayer/kuber/k8s"
 	"github.com/datalayer/kuber/log"
 	"github.com/datalayer/kuber/slots"
 	"github.com/gorilla/websocket"
@@ -63,8 +65,11 @@ func Ws(w http.ResponseWriter, r *http.Request) {
 			//			return
 		} else {
 
-			if m.Op == "PING" {
+			if m.Op == "KUBER_PING" {
 				doEcho(m, con, w, r)
+			}
+			if m.Op == "KUBER_STATUS" {
+				doStatus(m, con, w, r)
 			}
 			if m.Op == "CREATE_CLUSTER_DEF" {
 				doCommand(m, con, w, r, createClusterDefCommand)
@@ -89,6 +94,20 @@ func Ws(w http.ResponseWriter, r *http.Request) {
 
 func doEcho(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Request) {
 	writeJsonToConn(m, con, w, r)
+}
+
+func doStatus(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Request) {
+	mm := WsMessage{}
+	mm.Op = m.Op
+	cluster := ClusterStatus{}
+	cluster.ClusterName = "kuber"
+	cluster.Nodes = k8s.GetNodes(config.DefaultRegion)
+	cluster.Instances = aws.KuberInstances(config.DefaultRegion)
+	mm.Cluster = cluster
+	err := writeJsonToConn(mm, con, w, r)
+	if err != nil {
+		log.Info("error", err)
+	}
 }
 
 func doPutSlots(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Request) {
@@ -137,15 +156,15 @@ func doCommand(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.
 }
 
 func createClusterDefCommand(m WsMessage) {
-	k.CreateClusterDef(k.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
+	k8s.CreateClusterDef(k8s.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
 }
 
 func createClusterCommand(m WsMessage) {
-	k.CreateCluster(k.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
+	k8s.CreateCluster(k8s.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
 }
 
 func deleteClusterCommand(m WsMessage) {
-	k.DeleteCluster(k.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
+	k8s.DeleteCluster(k8s.Options(m.Cluster.ClusterName, m.Cluster.AwsProfile))
 }
 
 func pumpStdoutWs(m WsMessage, con *websocket.Conn, r io.Reader, done chan struct{}, hw http.ResponseWriter, hr *http.Request) {

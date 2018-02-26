@@ -23,6 +23,12 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
+var config *rest.Config
+
+func init() {
+	config, _ = GetConfig()
+}
+
 const (
 	retryAttempts     = 150
 	retrySleepSeconds = 5
@@ -31,6 +37,38 @@ const (
 var theConfig *rest.Config = nil
 
 func GetConfig() (*rest.Config, error) {
+
+	var config *rest.Config
+	var err error
+
+	if _, err := os.Stat("/var/run/secrets/kubernetes.io/serviceaccount/token"); os.IsNotExist(err) {
+		var kubeconfig *string
+		if home := util.GetUserHome(); home != "" {
+			kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+		} else {
+			kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+		}
+		flag.Parse()
+
+		config, err = clientcmd.BuildConfigFromFlags("", *kubeconfig)
+		if err != nil {
+			panic(err.Error())
+		}
+
+	} else {
+
+		config, err = rest.InClusterConfig()
+		if err != nil {
+			panic(err.Error())
+		}
+
+	}
+
+	return config, err
+
+}
+
+func GetConfig2() (*rest.Config, error) {
 
 	if theConfig != nil {
 		return theConfig, nil
@@ -56,7 +94,7 @@ func GetConfig() (*rest.Config, error) {
 	return config, err
 }
 
-func GetPodClient(namespace string, config *rest.Config) v1.PodInterface {
+func GetPodClient(namespace string) v1.PodInterface {
 	if namespace == "" {
 		namespace = metav1.NamespaceDefault
 	}
@@ -75,6 +113,38 @@ func FindNode(name string, nodes []corev1.Node) *corev1.Node {
 		}
 	}
 	return nil
+}
+
+func GetNodes(region string) *corev1.NodeList {
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
+	nodes, err := clientset.CoreV1().Nodes().List(metav1.ListOptions{})
+	if err != nil {
+		panic(err.Error())
+	}
+	return nodes
+}
+
+func TagK8SWorkers(region string) {
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
+	nodes, err := clientset.CoreV1().Nodes().List(metav1.ListOptions{})
+	if err != nil {
+		panic(err.Error())
+	}
+	for _, node := range nodes.Items {
+		if node.Labels["kuber-role"] != "master" {
+			fmt.Println(node.Name)
+			l := node.Labels
+			l["kuber-role"] = "node"
+			node.SetLabels(l)
+			clientset.CoreV1().Nodes().Update(&node)
+		}
+	}
 }
 
 func ListPodsOnNode(ListPodsOnNode func(opts metav1.ListOptions) (*corev1.PodList, error), node corev1.Node) []corev1.Pod {
