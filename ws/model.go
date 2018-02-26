@@ -15,7 +15,8 @@ type WsMessage struct {
 
 type ClusterStatus struct {
 	ClusterName string                       `json:"clusterName,omitempty"`
-	Nodes       *corev1.NodeList             `json:"nodes,omitempty"`
-	Instances   *ec2.DescribeInstancesOutput `json:"instances,omitempty"`
 	AwsProfile  string                       `json:"aswProfile,omitempty`
+	Instances   *ec2.DescribeInstancesOutput `json:"instances,omitempty"`
+	Nodes       *corev1.NodeList             `json:"nodes,omitempty"`
+	Pods        *corev1.PodList              `json:"pods,omitempty"`
 }

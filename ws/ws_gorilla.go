@@ -101,8 +101,9 @@ func doStatus(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.R
 	mm.Op = m.Op
 	cluster := ClusterStatus{}
 	cluster.ClusterName = "kuber"
-	cluster.Nodes = k8s.GetNodes(config.DefaultRegion)
 	cluster.Instances = aws.KuberInstances(config.DefaultRegion)
+	cluster.Nodes = k8s.GetNodes(config.DefaultRegion)
+	cluster.Pods, _ = k8s.GetPods("")
 	mm.Cluster = cluster
 	err := writeJsonToConn(mm, con, w, r)
 	if err != nil {

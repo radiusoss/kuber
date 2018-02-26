@@ -34,8 +34,6 @@ const (
 	retrySleepSeconds = 5
 )
 
-var theConfig *rest.Config = nil
-
 func GetConfig() (*rest.Config, error) {
 
 	var config *rest.Config
@@ -68,6 +66,8 @@ func GetConfig() (*rest.Config, error) {
 
 }
 
+var theConfig *rest.Config = nil
+
 func GetConfig2() (*rest.Config, error) {
 
 	if theConfig != nil {
@@ -92,6 +92,12 @@ func GetConfig2() (*rest.Config, error) {
 	}
 	theConfig = config
 	return config, err
+}
+
+func GetPods(namespace string) (*corev1.PodList, error) {
+	podClient := GetPodClient(namespace)
+	opts := metav1.ListOptions{}
+	return podClient.List(opts)
 }
 
 func GetPodClient(namespace string) v1.PodInterface {
