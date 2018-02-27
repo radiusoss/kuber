@@ -25,7 +25,7 @@ func (cl ClusterResource) WebService() *restful.WebService {
 }
 
 func (cl ClusterResource) ScaleCluster(request *restful.Request, response *restful.Response) {
-	i, _ := strconv.Atoi(request.PathParameter("size"))
-	scaled := aws.ScaleWorkers(int64(i), cf.DefaultRegion)
+	nw, _ := strconv.Atoi(request.PathParameter("size"))
+	scaled := aws.ScaleWorkers(int64(nw), int64(nw), cf.DefaultRegion)
 	response.WriteEntity(scaled)
 }

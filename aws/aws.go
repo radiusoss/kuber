@@ -191,8 +191,8 @@ func AdjustNumberOfWorkers(region string) {
 			clusterUp = true
 		}
 	}
-	var desiredWorkers int64 = 0
 	asg := GetAutoscalingGroup(region)
+	var desiredWorkers int64 = 0
 	if clusterUp {
 		desiredWorkers = *asg.MaxSize
 	}
@@ -329,17 +329,15 @@ func ScaleWorkers(desiredWorkers int64, maxWorkers int64, region string) *autosc
 	svc := autoscaling.New(NewSession(region))
 	asgn := "kuber.node"
 	g := GetAutoscalingGroup(region)
-	if &desiredWorkers != g.DesiredCapacity {
-		input2 := &autoscaling.UpdateAutoScalingGroupInput{
-			AutoScalingGroupName: aws.String(asgn),
-			DesiredCapacity:      &desiredWorkers,
-			MaxSize:              &maxWorkers,
-		}
-		_, err := svc.UpdateAutoScalingGroup(input2)
-		if err != nil {
-			fmt.Println("ScaleWorkers error in", region, err.Error())
-			log.Fatal(err.Error())
-		}
+	input2 := &autoscaling.UpdateAutoScalingGroupInput{
+		AutoScalingGroupName: aws.String(asgn),
+		DesiredCapacity:      &desiredWorkers,
+		MaxSize:              &maxWorkers,
+	}
+	_, err := svc.UpdateAutoScalingGroup(input2)
+	if err != nil {
+		fmt.Println("ScaleWorkers error in", region, err.Error())
+		log.Fatal(err.Error())
 	}
 	return g
 }
