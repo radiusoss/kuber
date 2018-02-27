@@ -192,11 +192,12 @@ func AdjustNumberOfWorkers(region string) {
 		}
 	}
 	var desiredWorkers int64 = 0
+	asg := GetAutoscalingGroup(region)
 	if clusterUp {
-		desiredWorkers = 3
+		desiredWorkers = *asg.MaxSize
 	}
 	fmt.Println("+++ Desired Workers: %v", desiredWorkers)
-	ScaleWorkers(desiredWorkers, region)
+	ScaleWorkers(desiredWorkers, *asg.MaxSize, region)
 }
 
 func InstancesByTag(tagName string, tagValue, region string) *ec2.DescribeInstancesOutput {
@@ -324,7 +325,7 @@ func GetAutoscalingGroup(region string) *autoscaling.Group {
 	return g
 }
 
-func ScaleWorkers(desiredWorkers int64, region string) *autoscaling.Group {
+func ScaleWorkers(desiredWorkers int64, maxWorkers int64, region string) *autoscaling.Group {
 	svc := autoscaling.New(NewSession(region))
 	asgn := "kuber.node"
 	g := GetAutoscalingGroup(region)
@@ -332,7 +333,7 @@ func ScaleWorkers(desiredWorkers int64, region string) *autoscaling.Group {
 		input2 := &autoscaling.UpdateAutoScalingGroupInput{
 			AutoScalingGroupName: aws.String(asgn),
 			DesiredCapacity:      &desiredWorkers,
-			MaxSize:              &desiredWorkers,
+			MaxSize:              &maxWorkers,
 		}
 		_, err := svc.UpdateAutoScalingGroup(input2)
 		if err != nil {
