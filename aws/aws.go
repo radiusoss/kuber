@@ -98,7 +98,7 @@ func InstancesByRegions(states []string, regions []string) {
 	}
 }
 
-func GetVolumes(region string) *ec2.DescribeVolumesOutput {
+func KuberVolumes(region string) *ec2.DescribeVolumesOutput {
 	svc := ec2.New(NewSession(region))
 	input := &ec2.DescribeVolumesInput{}
 	result, err := svc.DescribeVolumes(input)
@@ -116,7 +116,7 @@ func GetVolumes(region string) *ec2.DescribeVolumesOutput {
 	return result
 }
 
-func GetVolumesForInstance(region string, instanceId string) *ec2.DescribeVolumesOutput {
+func KuberVolumesForInstance(region string, instanceId string) *ec2.DescribeVolumesOutput {
 	svc := ec2.New(NewSession(region))
 	input := &ec2.DescribeVolumesInput{
 		Filters: []*ec2.Filter{
@@ -150,7 +150,7 @@ func GetVolumesForInstance(region string, instanceId string) *ec2.DescribeVolume
 }
 
 func TagAwsWorkers(region string) {
-	resp := InstancesByTag("Name", "kuber.node", region)
+	resp := KuberInstances(region)
 	if resp.Reservations != nil {
 		for _, instance := range resp.Reservations[0].Instances {
 			id := *instance.InstanceId
@@ -179,7 +179,7 @@ func RegisterMasterToLoadBalancers(region string) {
 	}
 }
 
-func AdjustNodeCapacity(region string) {
+func AdjustNumberOfWorkers(region string) {
 	slt := slots.Slots
 	clusterUp := false
 	for _, s := range slt {
@@ -307,42 +307,40 @@ func RegisterInstanceToLoadBalancer(instanceId *string, loadBalancerName *string
 	return result
 }
 
-func ScaleWorkers(desiredWorkers int64, region string) *autoscaling.Group {
+func GetAutoscalingGroup(region string) *autoscaling.Group {
 	svc := autoscaling.New(NewSession(region))
-
 	asgn := "kuber.node"
-
 	input := &autoscaling.DescribeAutoScalingGroupsInput{
 		AutoScalingGroupNames: []*string{
 			aws.String(asgn),
 		},
 	}
-
 	result, err := svc.DescribeAutoScalingGroups(input)
 	if err != nil {
-		fmt.Println("ScaleWorkers error in", region, err.Error())
+		fmt.Println("Scale Workers error in", region, err.Error())
 		log.Fatal(err.Error())
 	}
-
 	g := result.AutoScalingGroups[0]
+	return g
+}
 
+func ScaleWorkers(desiredWorkers int64, region string) *autoscaling.Group {
+	svc := autoscaling.New(NewSession(region))
+	asgn := "kuber.node"
+	g := GetAutoscalingGroup(region)
 	if &desiredWorkers != g.DesiredCapacity {
 		input2 := &autoscaling.UpdateAutoScalingGroupInput{
 			AutoScalingGroupName: aws.String(asgn),
 			DesiredCapacity:      &desiredWorkers,
 			MaxSize:              &desiredWorkers,
 		}
-
 		_, err := svc.UpdateAutoScalingGroup(input2)
 		if err != nil {
 			fmt.Println("ScaleWorkers error in", region, err.Error())
 			log.Fatal(err.Error())
 		}
-
 	}
-
 	return g
-
 }
 
 func TagResource(resourceId string, tagName string, tagValue, region string) {

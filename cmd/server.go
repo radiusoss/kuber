@@ -316,7 +316,7 @@ func handleFatalInitError(err error) {
 func sanitize(region string) {
 	for true {
 		if os.Getenv("KUBER_MANAGE_RESERVATIONS") == "true" {
-			aws.AdjustNodeCapacity(region)
+			aws.AdjustNumberOfWorkers(region)
 		}
 		aws.TagAwsWorkers(region)
 		k8s.TagK8SWorkers(region)

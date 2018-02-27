@@ -15,6 +15,7 @@ import (
 	"github.com/datalayer/kuber/log"
 	"github.com/datalayer/kuber/slots"
 	"github.com/gorilla/websocket"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
@@ -101,9 +102,10 @@ func doStatus(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.R
 	mm.Op = m.Op
 	cluster := ClusterStatus{}
 	cluster.ClusterName = "kuber"
-	cluster.Instances = aws.KuberInstances(config.DefaultRegion)
+	cluster.AwsInstances = aws.KuberInstances(config.DefaultRegion)
+	cluster.AwsAutoscalingGroup = aws.GetAutoscalingGroup(config.DefaultRegion)
 	cluster.Nodes = k8s.GetNodes(config.DefaultRegion)
-	cluster.Pods, _ = k8s.GetPods("")
+	cluster.Pods = k8s.GetPods(metav1.NamespaceDefault)
 	mm.Cluster = cluster
 	err := writeJsonToConn(mm, con, w, r)
 	if err != nil {

@@ -94,10 +94,11 @@ func GetConfig2() (*rest.Config, error) {
 	return config, err
 }
 
-func GetPods(namespace string) (*corev1.PodList, error) {
+func GetPods(namespace string) *corev1.PodList {
 	podClient := GetPodClient(namespace)
 	opts := metav1.ListOptions{}
-	return podClient.List(opts)
+	pods, _ := podClient.List(opts)
+	return pods
 }
 
 func GetPodClient(namespace string) v1.PodInterface {

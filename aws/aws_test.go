@@ -16,13 +16,13 @@ func TestMain(m *testing.M) {
 	//	testCluster = amazon.NewUbuntuCluster("aws-ubuntu-test")
 }
 
-func TestGetVolumes(t *testing.T) {
-	volumes := GetVolumes(region)
+func TestKuberVolumes(t *testing.T) {
+	volumes := KuberVolumes(region)
 	fmt.Println(volumes)
 }
 
-func TestGetVolumesForInstance(t *testing.T) {
-	volumes := GetVolumesForInstance(region, "i-08a86a21b0b7c22a7")
+func TestKuberVolumesForInstance(t *testing.T) {
+	volumes := KuberVolumesForInstance(region, "i-08a86a21b0b7c22a7")
 	fmt.Println(volumes)
 }
 
