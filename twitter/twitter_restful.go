@@ -63,7 +63,7 @@ func (t TwitterResource) RedirecToTwitter(request *restful.Request, response *re
 
 	redirecttUrl := conf.TwitterRedirect
 	if redirecttUrl == "" {
-		scheme := "http"
+		scheme := "https"
 		host := request.Request.Host
 		if strings.HasPrefix(host, "localhost") {
 			scheme = "http"
