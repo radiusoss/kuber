@@ -147,7 +147,7 @@ func TagK8SWorkers(region string) {
 		if node.Labels["kuber-role"] != "master" {
 			fmt.Println(node.Name)
 			l := node.Labels
-			l["kuber-role"] = "node"
+			l["kuber-role"] = "worker"
 			node.SetLabels(l)
 			clientset.CoreV1().Nodes().Update(&node)
 		}

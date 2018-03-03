@@ -154,8 +154,8 @@ func TagAwsWorkers(region string) {
 	if resp.Reservations != nil {
 		for _, instance := range resp.Reservations[0].Instances {
 			id := *instance.InstanceId
-			fmt.Println("Tagging with kuber-role=node resource: " + id)
-			TagResource(id, "kuber-role", "node", region)
+			fmt.Println("Tagging with kuber-role=worker resource: " + id)
+			TagResource(id, "kuber-role", "worker", region)
 		}
 	}
 }
