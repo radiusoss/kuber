@@ -100,13 +100,14 @@ func doEcho(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Req
 func doStatus(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Request) {
 	mm := WsMessage{}
 	mm.Op = m.Op
-	cluster := ClusterStatus{}
-	cluster.ClusterName = "kuber"
-	cluster.AwsInstances = aws.KuberInstances(config.DefaultRegion)
-	cluster.AwsAutoscalingGroup = aws.GetAutoscalingGroup(config.DefaultRegion)
-	cluster.Nodes = k8s.GetNodes(config.DefaultRegion)
-	cluster.Pods = k8s.GetPods(metav1.NamespaceDefault)
-	mm.Cluster = cluster
+	clusterStatus := ClusterStatus{}
+	clusterStatus.ClusterName = "kuber"
+	clusterStatus.AwsInstances = aws.KuberInstances(config.DefaultRegion)
+	clusterStatus.AwsMasterAutoscalingGroup = aws.GetMasterAutoscalingGroup(config.DefaultRegion)
+	clusterStatus.AwsWorkerAutoscalingGroup = aws.GetWorkerAutoscalingGroup(config.DefaultRegion)
+	clusterStatus.Nodes = k8s.GetNodes(config.DefaultRegion)
+	clusterStatus.Pods = k8s.GetPods(metav1.NamespaceDefault)
+	mm.ClusterStatus = clusterStatus
 	err := writeJsonToConn(mm, con, w, r)
 	if err != nil {
 		log.Info("error", err)

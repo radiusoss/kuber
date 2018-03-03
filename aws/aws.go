@@ -155,7 +155,7 @@ func TagAwsWorkers(region string) {
 		for _, instance := range resp.Reservations[0].Instances {
 			id := *instance.InstanceId
 			fmt.Println("Tagging with kuber-role=worker resource: " + id)
-			TagResource(id, "kuber-role", "worker", region)
+			TagResource(id, "kuber-role", "", region)
 		}
 	}
 }
@@ -191,7 +191,7 @@ func AdjustNumberOfWorkers(region string) {
 			clusterUp = true
 		}
 	}
-	asg := GetAutoscalingGroup(region)
+	asg := GetWorkerAutoscalingGroup(region)
 	var desiredWorkers int64 = 0
 	if clusterUp {
 		desiredWorkers = *asg.MaxSize
@@ -308,7 +308,24 @@ func RegisterInstanceToLoadBalancer(instanceId *string, loadBalancerName *string
 	return result
 }
 
-func GetAutoscalingGroup(region string) *autoscaling.Group {
+func GetMasterAutoscalingGroup(region string) *autoscaling.Group {
+	svc := autoscaling.New(NewSession(region))
+	asgn := "kuber.master"
+	input := &autoscaling.DescribeAutoScalingGroupsInput{
+		AutoScalingGroupNames: []*string{
+			aws.String(asgn),
+		},
+	}
+	result, err := svc.DescribeAutoScalingGroups(input)
+	if err != nil {
+		fmt.Println("Scale Workers error in", region, err.Error())
+		log.Fatal(err.Error())
+	}
+	g := result.AutoScalingGroups[0]
+	return g
+}
+
+func GetWorkerAutoscalingGroup(region string) *autoscaling.Group {
 	svc := autoscaling.New(NewSession(region))
 	asgn := "kuber.node"
 	input := &autoscaling.DescribeAutoScalingGroupsInput{
@@ -328,7 +345,7 @@ func GetAutoscalingGroup(region string) *autoscaling.Group {
 func ScaleWorkers(desiredWorkers int64, maxWorkers int64, region string) *autoscaling.Group {
 	svc := autoscaling.New(NewSession(region))
 	asgn := "kuber.node"
-	g := GetAutoscalingGroup(region)
+	g := GetWorkerAutoscalingGroup(region)
 	input2 := &autoscaling.UpdateAutoScalingGroupInput{
 		AutoScalingGroupName: aws.String(asgn),
 		DesiredCapacity:      &desiredWorkers,
