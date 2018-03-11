@@ -1,6 +1,6 @@
 package config
 
-const DefaultRegion = "eu-central-1"
+const DefaultRegion = "us-west-2"
 
 var KuberConfig Config
 
