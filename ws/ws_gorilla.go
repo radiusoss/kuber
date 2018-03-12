@@ -13,7 +13,7 @@ import (
 	"github.com/datalayer/kuber/config"
 	"github.com/datalayer/kuber/k8s"
 	"github.com/datalayer/kuber/log"
-	"github.com/datalayer/kuber/slots"
+	//"github.com/datalayer/kuber/slots"
 	"github.com/gorilla/websocket"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -81,12 +81,12 @@ func Ws(w http.ResponseWriter, r *http.Request) {
 			if m.Op == "DELETE_CLUSTER" {
 				doCommand(m, con, w, r, deleteClusterCommand)
 			}
-			if m.Op == "PUT_SLOTS" {
+			/*if m.Op == "PUT_SLOTS" {
 				doPutSlots(m, con, w, r)
 			}
 			if m.Op == "GET_SLOTS" {
 				doGetSlots(m, con, w, r)
-			}
+			}*/
 		}
 
 	}
@@ -114,16 +114,16 @@ func doStatus(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.R
 	}
 }
 
-func doPutSlots(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Request) {
+/*func doPutSlots(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Request) {
 	log.Info("Slots: %v", m.Slots)
 	slots.PutSlots(m.Slots)
 	err := writeJsonToConn(m, con, w, r)
 	if err != nil {
 		log.Info("error", err)
 	}
-}
+}*/
 
-func doGetSlots(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Request) {
+/*func doGetSlots(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Request) {
 	slots := slots.GetSlots()
 	log.Info("Slots: %v", slots)
 	mm := WsMessage{}
@@ -133,7 +133,7 @@ func doGetSlots(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http
 	if err != nil {
 		log.Info("error", err)
 	}
-}
+}*/
 
 func doCommand(m WsMessage, con *websocket.Conn, w http.ResponseWriter, r *http.Request, run runner) {
 

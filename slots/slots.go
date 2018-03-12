@@ -31,11 +31,11 @@ func init() {
 
 }
 
-func PutSlots(slots []Slot) {
+/*func PutSlots(slots []Slot) {
 	log.Info("Slots: %v", slots)
 	Slots = slots
 }
 func GetSlots() []Slot {
 	log.Info("Slots: %v", Slots)
 	return Slots
-}
+}*/
