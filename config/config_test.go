@@ -20,8 +20,6 @@ func TestLoad(t *testing.T) {
 	if err != nil {
 		log.Fatalf("unable to decode into struct, %v", err)
 	}
-	log.Printf("database uri is %s", configuration.Database.ConnectionUri)
-	log.Printf("port for this application is %d", configuration.Server.Port)
 }
 
 func TestYaml(t *testing.T) {

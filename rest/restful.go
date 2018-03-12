@@ -5,7 +5,6 @@ import (
 	"github.com/datalayer/kuber/config"
 	"github.com/datalayer/kuber/helm"
 	k "github.com/datalayer/kuber/k8s"
-	"github.com/datalayer/kuber/user"
 	wso "github.com/datalayer/kuber/ws"
 	restful "github.com/emicklei/go-restful"
 )
@@ -44,9 +43,5 @@ func SetupGoRestful(wsContainer *restful.Container) {
 	// Helm Resources.
 	h := helm.HelmResource{}
 	wsContainer.Add(h.WebService())
-
-	// User Resources.
-	u := user.UserResource{map[string]user.User{}}
-	wsContainer.Add(u.WebService())
 
 }

@@ -1,13 +1,8 @@
-microsoftApplicationId: f145fb87-901d-4519-ad39-573c30770e6f
-microsoftRedirect: http://localhost:4326
-microsoftScope: User.ReadBasic.All+Contacts.Read+Mail.Send+Files.ReadWrite+Notes.ReadWrite
 kuberUi: http://localhost:4326
 kuberRest: http://localhost:9091
 kuberWs: ws://localhost:9091
-spitfireRest: http://localhost:8091
-spitfireWs: ws://localhost:8091
-hdfs: http://localhost:50070
-twitterRedirect: http://datalayer-001:8081/twitter/maketoken
+spitfireRest: http://localhost:8080
+spitfireWs: ws://localhost:8080
 database:
   connectionUri: "database connection uri"
 server:
